@@ -26,4 +26,6 @@ public interface UserService {
 	User updateUserStatus(Long adminId, Long userId, StatusUpdateDTO dto);
 	
 	User updateUser(Long requesterId, Long userId, User updatedUser);
+	
+	User findByEmail(String email);
 }

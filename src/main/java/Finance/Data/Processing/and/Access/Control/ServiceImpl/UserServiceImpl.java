@@ -154,6 +154,13 @@ public class UserServiceImpl implements UserService {
 		return userRepository.save(existingUser);
 	}
 	
+	public User findByEmail(String email){
+		
+		User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+		
+		return user;
+	}
+	
 	@Override
 	public UserResponseDTO mapToDTO(User user) {
 		if (user == null) {
