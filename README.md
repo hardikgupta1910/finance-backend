@@ -1,20 +1,30 @@
-# 💰 Finance Backend (Spring Boot + JWT)
+# 💰 Finance Backend API (Spring Boot + JWT + BCrypt)
 
-A secure backend system for managing users and financial records with **JWT-based authentication** and **role-based access control**.
+A secure backend system for managing users and financial records with **JWT authentication**, **BCrypt password hashing**, and **role-based authorization**.
 
 ---
 
 # 🚀 Features
 
 * 🔐 JWT Authentication (Signin / Signup)
-* 👤 User Management (Role + Status control)
-* 💰 Financial Records (Income & Expense tracking)
-* 📊 Dashboard Analytics (Summary, Category, Recent)
-* 🛡️ Secure APIs (No fake userId, fully token-based)
+* 🔒 BCrypt Password Encryption
+* 👤 User Management (Role & Status control)
+* 💰 Financial Record Management
+* 📊 Dashboard Analytics
+* 🛡️ Role-Based Access Control (`@PreAuthorize`)
+* ⚠️ Global Exception Handling
 
 ---
 
-# 🧠 Authentication Flow
+# 🌐 Base URL
+
+```http
+http://localhost:8080
+```
+
+---
+
+# 🔐 Authentication Flow
 
 ### 1️⃣ Signup
 
@@ -38,11 +48,21 @@ Response:
 
 ---
 
-### 3️⃣ Access Protected APIs
+### 3️⃣ Use Token
 
 ```http
 Authorization: Bearer <JWT_TOKEN>
 ```
+
+---
+
+# 👥 Roles & Permissions
+
+| Role    | Permissions                        |
+| ------- | ---------------------------------- |
+| ADMIN   | Full access (CRUD users & records) |
+| ANALYST | Read + create/update records       |
+| VIEWER  | Read-only access                   |
 
 ---
 
@@ -55,6 +75,7 @@ src/main/java/com/finance/backend/
 │   ├── SecurityConfig.java
 │   ├── JwtFilter.java
 │   ├── JwtService.java
+│   ├── PasswordConfig.java
 │
 ├── Controller/
 │   ├── AuthController.java
@@ -70,87 +91,69 @@ src/main/java/com/finance/backend/
 │   ├── FinancialRecordDTO.java
 │   ├── FinancialRecordRequestDTO.java
 │
-├── Domain/
 ├── Model/
 ├── Repository/
 ├── Service/
 ├── ServiceImpl/
 ├── Exception/
+│   ├── GlobalExceptionHandler.java
+│   ├── ErrorResponseDTO.java
 │
 └── DemoApplication.java
 ```
 
 ---
 
-# 🔐 Security Implementation
+# 🔐 Security Architecture
 
-* Custom `JwtFilter` (OncePerRequestFilter)
-* Token validation on every request
-* Stateless session (no server-side storage)
-* User identity extracted from token
-* Removed insecure `userId` from request params
-
----
-
-# 🌐 Base URL
-
-```http
-http://localhost:8080
-```
-
-All API endpoints are relative to this base URL.
+* JWT-based stateless authentication
+* Custom `JwtFilter` using `OncePerRequestFilter`
+* Role-based authorization via `@PreAuthorize`
+* Passwords securely stored using BCrypt
+* Authentication stored in `SecurityContextHolder`
 
 ---
-
-### Example
-
-```http
-POST http://localhost:8080/auth/signin
-GET http://localhost:8080/records
-```
-
 
 # 🌐 API Endpoints
 
-
-## 🔐 Auth APIs
+## 🔐 Auth
 
 * `POST /auth/signup`
 * `POST /auth/signin`
 
 ---
 
-## 👤 User APIs
+## 👤 Users
 
-* `GET /users/{id}`
-* `GET /users`
-* `PATCH /users/{id}/role`
-* `PATCH /users/{id}/status`
-* `PATCH /users/{id}`
-* `DELETE /users/{id}`
-
----
-
-## 💰 Financial APIs
-
-* `POST /records`
-* `GET /records`
-* `PUT /records/{id}`
-* `DELETE /records/{id}`
+* `GET /users/{id}` → self or admin
+* `GET /users` → admin only
+* `PATCH /users/{id}` → self or admin
+* `PATCH /users/{id}/role` → admin
+* `PATCH /users/{id}/status` → admin
+* `DELETE /users/{id}` → self or admin
 
 ---
 
-## 📊 Dashboard APIs
+## 💰 Financial Records
 
-* `GET /records/summary`
-* `GET /records/summary/category`
-* `GET /records/recent`
+* `POST /records` → admin
+* `GET /records` → admin, analyst
+* `PUT /records/{id}` → admin
+* `DELETE /records/{id}` → admin
+
+---
+
+## 📊 Dashboard
+
+* `GET /records/summary` → admin, analyst
+* `GET /records/summary/category` → admin, analyst
+* `GET /records/recent` → admin, analyst
 
 ---
 
 # 🧾 Sample Request
 
-### Create Financial Record
+### Create Record
 
 ```http
 POST /records
@@ -174,24 +177,24 @@ Authorization: Bearer <JWT_TOKEN>
 
 ---
 
-# 🛠️ Tech Stack
+# ⚙️ Configuration
 
-* Java
-* Spring Boot
-* Spring Security
-* JWT (jjwt)
-* Spring Data JPA
-* Hibernate
-* MySQL
-
----
-
-# ⚙️ Configuration (Environment Variables)
-
-Sensitive data is stored using environment variables:
+### Environment Variable
 
 ```properties
 spring.datasource.password=${FINANCE_DB_PASSWORD}
+```
+
+---
+
+# ⚠️ Error Response Format
+
+```json
+{
+  "message": "Invalid credentials",
+  "status": 400,
+  "timestamp": "2026-04-05T10:30:00"
+}
 ```
 
 ---
@@ -207,25 +210,17 @@ mvn spring-boot:run
 # 🧪 Testing
 
 * Tested using Postman
-* JWT authentication verified
-* Unauthorized access blocked
-
----
-
-# ⚠️ Limitations
-
-* Password stored in plain text (no hashing yet)
-* No refresh token system
-* No advanced role annotations (`@PreAuthorize`)
-* Basic exception handling
+* JWT authentication validated
+* Role-based access verified
+* Error handling standardized
 
 ---
 
 # 🔜 Future Improvements
 
-* BCrypt password hashing
-* Role-based authorization (Spring Security annotations)
-* Refresh tokens
+* Refresh token implementation
+* Role hierarchy (ADMIN > ANALYST > VIEWER)
+* Pagination & sorting
 * Logging & monitoring
 * Unit & integration tests
 
