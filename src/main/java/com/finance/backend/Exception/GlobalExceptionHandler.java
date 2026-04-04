@@ -11,9 +11,9 @@ import java.time.LocalDateTime;
 public class GlobalExceptionHandler {
 	
 	@ExceptionHandler(RuntimeException.class)
-	public ResponseEntity<ErrorResponse> handleRuntime(RuntimeException ex) {
+	public ResponseEntity<ErrorResponseDTO> handleRuntime(RuntimeException ex) {
 		
-		ErrorResponse error = new ErrorResponse(
+		ErrorResponseDTO error = new ErrorResponseDTO(
 				ex.getMessage(),
 				HttpStatus.BAD_REQUEST.value(),
 				LocalDateTime.now()

@@ -35,9 +35,7 @@ public class FinancialServiceImpl implements FinancialRecordService {
 		}
 		User user=userRepository.findById(userId).orElseThrow(()->new RuntimeException("User not found"));
 		
-				 if(user.getRole()!= Role.ADMIN){
-					 throw new RuntimeException("Access Denied");
-				 }
+
 				 
 				 record.setUser(user);
 		return  financialRecordRepository.save(record);
@@ -50,10 +48,7 @@ public class FinancialServiceImpl implements FinancialRecordService {
 		if (record == null) {
 			throw new RuntimeException("Record data cannot be null");
 		}
-		User user=userRepository.findById(userId).orElseThrow(()->new RuntimeException("User not found"));
-		if(user.getRole()!= Role.ADMIN){
-			throw new RuntimeException("Access Denied: only Admin can update record");
-		}
+
 		
 		FinancialRecord updateRecord=financialRecordRepository.findById(recordId).orElseThrow(()->new RuntimeException("Record not found"));
 
@@ -80,12 +75,7 @@ public class FinancialServiceImpl implements FinancialRecordService {
 	@Override
 	public List<FinancialRecord> getRecords(Long userId, String type, String category) {
 		
-		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new RuntimeException("User not found"));
 		
-		if (user.getRole() == Role.VIEWER) {
-			throw new RuntimeException("Access Denied for Viewer Role");
-		}
 		
 		List<FinancialRecord> records = financialRecordRepository.findByUserId(userId);
 		
@@ -109,10 +99,7 @@ public class FinancialServiceImpl implements FinancialRecordService {
 	@Transactional
 	@Override
 	public void deleteRecord(Long recordId, Long userId) {
-	 User user=userRepository.findById(userId).orElseThrow(()->new RuntimeException("User not found"));
-	 if(user.getRole()!= Role.ADMIN){
-		 throw new RuntimeException("Access Denied: Only Admin can delete records");
-	 }
+	 
 		FinancialRecord record=financialRecordRepository.findById(recordId).orElseThrow(()->new RuntimeException("Record not found"));
 		
 		financialRecordRepository.delete(record);
@@ -120,11 +107,7 @@ public class FinancialServiceImpl implements FinancialRecordService {
 	
 	@Override
 	public BigDecimal getTotalIncome(Long userId){
-		User user=userRepository.findById(userId).orElseThrow(()->new RuntimeException("User not found"));
 		
-		if(user.getRole()== Role.VIEWER){
-			throw new RuntimeException("Access Denied");
-		}
 		
 		List<FinancialRecord> records=financialRecordRepository.findByUserId(userId);
 		
@@ -145,9 +128,7 @@ public class FinancialServiceImpl implements FinancialRecordService {
 	public BigDecimal getTotalExpense(Long userId){
 		User user=userRepository.findById(userId).orElseThrow(()->new RuntimeException("User not found"));
 		
-		if(user.getRole()== Role.VIEWER){
-			throw new RuntimeException("Access Denied");
-		}
+
 		
 		List<FinancialRecord> records=financialRecordRepository.findByUserId(userId);
 		
@@ -191,9 +172,9 @@ public class FinancialServiceImpl implements FinancialRecordService {
 	public Map<String, BigDecimal> getCategoryTotals(Long UserId){
 		User user=userRepository.findById(UserId).orElseThrow(()->new RuntimeException("User not found"));
 		
-		if(user.getRole()== Role.VIEWER){
-			throw new RuntimeException("Access Denied for  Viewer Role");
-		}
+//		if(user.getRole()== Role.VIEWER){
+//			throw new RuntimeException("Access Denied for  Viewer Role");
+//		}
 		
 		List<FinancialRecord> records=financialRecordRepository.findByUserId(UserId);
 		Map<String, BigDecimal> result = new HashMap<>();
@@ -220,9 +201,9 @@ public class FinancialServiceImpl implements FinancialRecordService {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new RuntimeException("User not found"));
 		
-		if (user.getRole() == Role.VIEWER) {
-			throw new RuntimeException("Access Denied");
-		}
+//		if (user.getRole() == Role.VIEWER) {
+//			throw new RuntimeException("Access Denied");
+//		}
 		
 		List<FinancialRecord> records =
 				financialRecordRepository.findTop5ByUserIdOrderByDateDesc(userId);

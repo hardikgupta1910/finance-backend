@@ -13,7 +13,7 @@ public interface UserService {
 	
 	 User createUserFromDTO(UserRequestDTO dto);
 	
-	List<User> getAllUsers(Long adminId);
+	List<User> getAllUsers();
 	
 	User getUserById(Long id);
 	

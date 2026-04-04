@@ -9,6 +9,7 @@ import com.finance.backend.Service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
@@ -23,55 +24,8 @@ public class UserController {
 		this.userService = userService;
 	}
 	
-
-//	@GetMapping("/{id}")
-//	public ResponseEntity<UserResponseDTO> getUser(@PathVariable Long id) {
-//		User user=userService.getUserById(id);
-//		return ResponseEntity.ok(userService.mapToDTO(user));
-//	}
-//
-//
-//	@GetMapping
-//	public ResponseEntity<List<UserResponseDTO>> getAllUsers(@RequestParam Long adminId) {
-//		List<User> users=userService.getAllUsers(adminId);
-//		List<UserResponseDTO>response = users.stream().map(userService::mapToDTO).toList();
-//
-//		return ResponseEntity.ok(response);
-//	}
-//
-//
-//
-//	@PostMapping
-//	public ResponseEntity<UserResponseDTO> createUserFromDTO(@Valid  @RequestBody UserRequestDTO  userRequestDTO) {
-//		User user=userService.createUserFromDTO(userRequestDTO);
-//		return ResponseEntity.ok(userService.mapToDTO(user));
-//	}
-//
-//	@PatchMapping("/{userId}/role")
-//	public ResponseEntity<UserResponseDTO> updateUserRole(@RequestParam Long adminId, @PathVariable Long userId, @RequestBody RoleUpdateDTO dto) {
-//		User user=userService.updateUserRole(adminId, userId, dto);
-//		return ResponseEntity.ok(userService.mapToDTO(user));
-//	}
-//
-//	@PatchMapping("/{userId}/status")
-//	public  ResponseEntity<UserResponseDTO> updateUserStatus(@RequestParam Long adminId, @PathVariable Long userId,  @RequestBody StatusUpdateDTO dto){
-//		User user=userService.updateUserStatus(adminId, userId, dto);
-//		return ResponseEntity.ok(userService.mapToDTO(user));	}
-//
-//	@PatchMapping("/{userId}")
-//	public  ResponseEntity<User> updateUser(@RequestParam Long requesterId, @PathVariable Long userId, @RequestBody User user) {
-//
-//		return ResponseEntity.ok(userService.updateUser(requesterId, userId, user));
-//	}
-//
-//	@DeleteMapping("/{userId}")
-//	public ResponseEntity<String> deleteUser(@RequestParam Long requesterId, @PathVariable Long userId) {
-//
-//		userService.deleteUser(requesterId, userId);
-//		return ResponseEntity.ok("User deleted successfully");
-//	}
 	
-		private Long getUserId() {
+	private Long getUserId() {
 		return (Long) SecurityContextHolder
 				.getContext()
 				.getAuthentication()
@@ -80,17 +34,18 @@ public class UserController {
 
 	
 	@GetMapping("/{id}")
+	@PreAuthorize("hasRole('ADMIN') or #id == authentication.principal")
 	public ResponseEntity<UserResponseDTO> getUser(@PathVariable Long id) {
 		User user = userService.getUserById(id);
 		return ResponseEntity.ok(userService.mapToDTO(user));
 	}
 	
 	@GetMapping
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
 		
-		Long adminId = getUserId();
 		
-		List<User> users = userService.getAllUsers(adminId);
+		List<User> users = userService.getAllUsers();
 		List<UserResponseDTO> response =
 				users.stream().map(userService::mapToDTO).toList();
 		
@@ -98,6 +53,7 @@ public class UserController {
 	}
 	
 	@PostMapping
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<UserResponseDTO> createUserFromDTO(
 			@Valid @RequestBody UserRequestDTO userRequestDTO) {
 		
@@ -106,6 +62,7 @@ public class UserController {
 	}
 	
 	@PatchMapping("/{userId}/role")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<UserResponseDTO> updateUserRole(
 			@PathVariable Long userId,
 			@RequestBody RoleUpdateDTO dto) {
@@ -117,6 +74,7 @@ public class UserController {
 	}
 	
 	@PatchMapping("/{userId}/status")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<UserResponseDTO> updateUserStatus(
 			@PathVariable Long userId,
 			@RequestBody StatusUpdateDTO dto) {
@@ -128,6 +86,7 @@ public class UserController {
 	}
 	
 	@PatchMapping("/{userId}")
+	@PreAuthorize("hasRole('ADMIN') or #userId == authentication.principal")
 	public ResponseEntity<User> updateUser(
 			@PathVariable Long userId,
 			@RequestBody User user) {
@@ -138,6 +97,7 @@ public class UserController {
 	}
 	
 	@DeleteMapping("/{userId}")
+	@PreAuthorize("hasRole('ADMIN') or #userId == authentication.principal")
 	public ResponseEntity<String> deleteUser(@PathVariable Long userId) {
 		
 		Long requesterId = getUserId();

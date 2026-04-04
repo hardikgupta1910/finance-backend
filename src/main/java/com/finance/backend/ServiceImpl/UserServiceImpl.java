@@ -10,6 +10,7 @@ import com.finance.backend.Model.User;
 import com.finance.backend.Repository.UserRepository;
 import com.finance.backend.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,9 +18,11 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
 	private final UserRepository userRepository;
+	private final PasswordEncoder passwordEncoder;
 	@Autowired
-	UserServiceImpl(UserRepository userRepository) {
+	UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
 		this.userRepository = userRepository;
+		this.passwordEncoder = passwordEncoder;
 	}
 	
 	
@@ -27,15 +30,22 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User createUserFromDTO(UserRequestDTO dto) {
 		
-		if(dto==null){
-			throw  new IllegalArgumentException("user data cannot be null");
+		if(dto==null) {
+			throw new IllegalArgumentException("User data cannot be null");
+		}
+		
+		if (dto.getEmail() == null || dto.getEmail().isBlank()) {
+			throw new IllegalArgumentException("Email cannot be empty");
+		}
+		if (dto.getPassword() == null || dto.getPassword().isBlank()) {
+			throw new IllegalArgumentException("Password cannot be empty");
 		}
 		if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
 			throw new RuntimeException("Email already exists");
 		}
 		User user = new User();
 		user.setEmail(dto.getEmail());
-		user.setPassword(dto.getPassword());
+		user.setPassword(passwordEncoder.encode(dto.getPassword()));
 		user.setUserName(dto.getUserName());
 		user.setRole(Role.VIEWER); // default
 		user.setStatus(Status.ACTIVE);
@@ -44,13 +54,9 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public List<User> getAllUsers(Long adminId) {
-		User admin = userRepository.findById(adminId)
-				.orElseThrow(() -> new RuntimeException("User not found"));
+	public List<User> getAllUsers() {
 		
-		if (admin.getRole() != Role.ADMIN) {
-			throw new RuntimeException("Access Denied: Only Admin can view all users");
-		}
+		
 		
 		return userRepository.findAll();
 	}
@@ -71,11 +77,8 @@ public class UserServiceImpl implements UserService {
 		if (dto == null || dto.getRole() == null) {
 			throw new RuntimeException("Role data cannot be null");
 		}
-		User admin=userRepository.findById(adminId).orElseThrow(()->new RuntimeException("User not found"));
 		
-		if(admin.getRole()!=Role.ADMIN) {
-			throw  new RuntimeException("Access Denied: Only Admin can update the users");
-		}
+		
 		User user = userRepository.findById(userId).orElseThrow(()->new RuntimeException("User not found"));
 		user.setRole(Role.valueOf(dto.getRole()));
 		
@@ -89,10 +92,7 @@ public class UserServiceImpl implements UserService {
 			throw new RuntimeException("Status data cannot be null");
 		}
 		
-		User admin=userRepository.findById(adminId).orElseThrow(()->new RuntimeException("User not found"));
-		if(admin.getRole()!=Role.ADMIN) {
-			throw  new RuntimeException("Access Denied: Only Admin can update the users");
-		}
+		
 		
 		User user = userRepository.findById(userId).orElseThrow(()->new RuntimeException("User not found"));
 		user.setStatus(Status.valueOf(dto.getStatus()));
@@ -103,10 +103,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void deleteUser( Long requesterID , Long userId) {
 		
-		User requester=userRepository.findById(requesterID).orElseThrow(()->new RuntimeException("User not found"));
-		if (!requester.getId().equals(userId) && requester.getRole() != Role.ADMIN) {
-			throw new RuntimeException("Access Denied: Cannot update other users");
-		}
+		
 		User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
 		
 		long adminCount=userRepository.findAll().stream()
@@ -125,16 +122,9 @@ public class UserServiceImpl implements UserService {
 			throw new RuntimeException("User data cannot be null");
 		}
 		
-		User requester = userRepository.findById(requesterId)
-				.orElseThrow(() -> new RuntimeException("Requester not found"));
 		
 		User existingUser = userRepository.findById(userId)
 				.orElseThrow(() -> new RuntimeException("User not found"));
-		
-		
-		if (!requester.getId().equals(userId) && requester.getRole() != Role.ADMIN) {
-			throw new RuntimeException("Access Denied: Cannot update other users");
-		}
 		
 		
 		if (updatedUser.getEmail() != null) {
