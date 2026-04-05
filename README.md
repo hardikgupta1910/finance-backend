@@ -1,6 +1,6 @@
 # 💰 Finance Backend API
 
-A secure and scalable backend system built using **Spring Boot**, featuring **JWT authentication**, **BCrypt password hashing**, **role-based authorization**, **pagination**, **search**, and **Swagger API documentation with JWT support**.
+A secure and scalable backend system built using **Spring Boot**, featuring **JWT authentication**, **BCrypt password hashing**, **role-based authorization**, **pagination**, **keyword search**, and **Swagger API documentation with JWT support**.
 
 ---
 
@@ -25,10 +25,10 @@ Base URL:
 
 https://finance-backend-1r92.onrender.com
 
-⚠️ Notes:
+⚠️ Note:
 
-* Root endpoint `/` is secured → returns **403 Forbidden**
-* Use endpoints like `/auth/signup`, `/auth/signin`, `/records`
+* Root endpoint `/` is secured → will return **403 Forbidden**
+* Use specific endpoints like `/auth/signup`, `/auth/signin`, `/records`, etc.
 
 ---
 
@@ -36,7 +36,7 @@ https://finance-backend-1r92.onrender.com
 
 https://finance-backend-1r92.onrender.com/swagger-ui/index.html
 
-Use Swagger to test APIs directly.
+👉 Use Swagger to test APIs directly in browser.
 
 ---
 
@@ -44,7 +44,11 @@ Use Swagger to test APIs directly.
 
 ## 1️⃣ Signup
 
+```http
 POST /auth/signup
+```
+
+### Sample Request Body
 
 ```json
 {
@@ -54,13 +58,17 @@ POST /auth/signup
 }
 ```
 
-Default role: **VIEWER**
+👉 Default role assigned: **VIEWER**
 
 ---
 
 ## 2️⃣ Signin
 
+```http
 POST /auth/signin
+```
+
+### Sample Request Body (Admin)
 
 ```json
 {
@@ -69,7 +77,7 @@ POST /auth/signin
 }
 ```
 
-Response:
+### Response
 
 ```json
 "JWT_TOKEN"
@@ -77,17 +85,19 @@ Response:
 
 ---
 
-## 3️⃣ Authorization
+## 3️⃣ Use Token
 
 All protected endpoints require:
 
+```http
 Authorization: Bearer <JWT_TOKEN>
+```
 
 ---
 
-# 🔑 Default Admin
+# 🔑 Default Admin Credentials
 
-Auto-created on application startup:
+> Admin user is automatically created on first application startup.
 
 ```json
 {
@@ -95,6 +105,8 @@ Auto-created on application startup:
   "password": "admin123"
 }
 ```
+
+💡 First-time users can directly login using default admin credentials.
 
 ---
 
@@ -110,6 +122,7 @@ Auto-created on application startup:
 
 # 📁 Project Structure
 
+```
 src/main/java/com/finance/backend/
 
 ├── config/
@@ -129,6 +142,7 @@ src/main/java/com/finance/backend/
 ├── exception/
 │
 └── DemoApplication.java
+```
 
 ---
 
@@ -136,36 +150,38 @@ src/main/java/com/finance/backend/
 
 ## 🔐 Auth
 
-* POST /auth/signup
-* POST /auth/signin
+* `POST /auth/signup`
+* `POST /auth/signin`
 
 ---
 
 ## 👤 Users
 
-* GET /users/{id} → self or admin
-* GET /users → admin only
-* PATCH /users/{id} → self or admin
-* PATCH /users/{id}/role → admin
-* PATCH /users/{id}/status → admin
-* DELETE /users/{id} → self or admin
+* `GET /users/{id}` → self or admin
+* `GET /users` → admin only
+* `PATCH /users/{id}` → self or admin
+* `PATCH /users/{id}/role` → admin
+* `PATCH /users/{id}/status` → admin
+* `DELETE /users/{id}` → self or admin
 
 ---
 
 ## 💰 Financial Records
 
-* POST /records → admin only
-* GET /records → paginated, filtered, sorted
-* PUT /records/{id} → admin only
-* DELETE /records/{id} → admin only
+* `POST /records` → admin only
+* `GET /records` → paginated + filter + sorted
+* `PUT /records/{id}` → admin only
+* `DELETE /records/{id}` → admin only
 
 ---
 
 ## 🔍 Search
 
+```http
 GET /records/search?keyword=food&page=0&size=5
+```
 
-Search fields:
+Searches:
 
 * category
 * note
@@ -174,36 +190,40 @@ Search fields:
 
 ## 📊 Dashboard
 
-* GET /records/summary
-* GET /records/summary/category
-* GET /records/recent
+* `GET /records/summary`
+* `GET /records/summary/category`
+* `GET /records/recent`
 
 ---
 
 # 📄 Pagination Example
 
+```http
 GET /records?page=0&size=5&type=INCOME
+```
 
-* page → 0-based index
-* size → number of records
-* Default sorting → date DESC
+* `page` → page index (0-based)
+* `size` → number of records
+* Sorted by `date DESC`
 
 ---
 
-# ⚙️ Configuration (Render)
+# ⚙️ Configuration (Render Deployment)
 
-Environment variables:
+Environment variables used:
 
+```env
 SPRING_DATASOURCE_URL=jdbc:postgresql://<host>:5432/<db>
 SPRING_DATASOURCE_USERNAME=<username>
-FINANCE_DB_PASSWORD=<password>
+SPRING_DATASOURCE_PASSWORD=<password>
 
-ADMIN_EMAIL=[admin@finance.com](mailto:admin@finance.com)
+ADMIN_EMAIL=admin@finance.com
 ADMIN_PASSWORD=admin123
+```
 
 ---
 
-# ⚠️ Error Response
+# ⚠️ Error Response Format
 
 ```json
 {
@@ -217,26 +237,28 @@ ADMIN_PASSWORD=admin123
 
 # ▶️ Run Locally
 
+```bash
 mvn spring-boot:run
+```
 
 ---
 
 # 🧪 Testing
 
-* Tested using Postman & Swagger
+* Tested using Postman and Swagger
 * JWT authentication verified
-* Role-based access enforced
-* Pagination & search validated
+* Role-based authorization enforced
+* Pagination and search validated
 
 ---
 
 # 🔜 Future Improvements
 
-* Advanced filters (amount/date range)
-* Refresh tokens
-* Unit & integration tests
+* Advanced filtering (amount/date range)
+* Refresh token implementation
+* Unit & integration testing
 * Rate limiting
-* Soft delete
+* Soft delete support
 
 ---
 
@@ -244,4 +266,3 @@ mvn spring-boot:run
 
 Hardik Gupta
 B.Tech CSE (AI & ML)
-[hardikgupta8109@gmail.com](mailto:hardikgupta8109@gmail.com)
