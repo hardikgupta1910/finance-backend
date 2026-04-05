@@ -16,64 +16,100 @@ A secure and scalable backend system built using **Spring Boot**, featuring **JW
 * 🛡️ Method-level Security using `@PreAuthorize`
 * ⚠️ Global Exception Handling
 * 📘 Swagger API Documentation with JWT Authorization
-* 🐘 PostgreSQL Database Integration
-* ☁️ Ready for Cloud Deployment (Render)
 
 ---
 
-# 🌐 Base URL
+# 🌐 Live API
 
-### 🔹 Local
-
-```
-http://localhost:8080
+```text
+https://finance-backend-1r92.onrender.com
 ```
 
-### 🔹 Production (Render)
+---
 
-```
-https://<your-app-name>.onrender.com
+# 📘 Swagger UI
+
+```text
+https://finance-backend-1r92.onrender.com/swagger-ui/index.html
 ```
 
 ---
 
 # 🔐 Authentication Flow
 
-### 1️⃣ Signup
+## 1️⃣ Signup
 
-```
+```http
 POST /auth/signup
 ```
 
-### 2️⃣ Signin
+### Sample Request Body
 
+```json
+{
+  "email": "user1@gmail.com",
+  "password": "qwerty1234",
+  "userName": "user1"
+}
 ```
+
+👉 Default role assigned: **VIEWER**
+
+---
+
+## 2️⃣ Signin
+
+```http
 POST /auth/signin
 ```
 
-Response:
+### Sample Request Body (Admin)
+
+```json
+{
+  "email": "admin@finance.com",
+  "password": "admin123"
+}
+```
+
+### Response
 
 ```json
 "JWT_TOKEN"
 ```
 
-### 3️⃣ Use Token
+---
+
+## 3️⃣ Use Token
 
 All protected endpoints require:
 
-```
+```http
 Authorization: Bearer <JWT_TOKEN>
+```
+
+---
+
+# 🔑 Default Admin Credentials
+
+> Admin user is automatically created on first application startup.
+
+```json
+{
+  "email": "admin@finance.com",
+  "password": "admin123"
+}
 ```
 
 ---
 
 # 👥 Roles & Permissions
 
-| Role    | Access                        |
-| ------- | ----------------------------- |
-| ADMIN   | Full access                   |
-| ANALYST | Read + Create records         |
-| VIEWER  | Read-only (summary & records) |
+| Role    | Access        |
+| ------- | ------------- |
+| ADMIN   | Full access   |
+| ANALYST | Read + Create |
+| VIEWER  | Read-only     |
 
 ---
 
@@ -82,40 +118,24 @@ Authorization: Bearer <JWT_TOKEN>
 ```
 src/main/java/com/finance/backend/
 
-├── Config/
+├── config/
 │   ├── SecurityConfig.java
 │   ├── JwtFilter.java
 │   ├── JwtService.java
 │   ├── PasswordConfig.java
 │   ├── OpenApiConfig.java
+│   ├── DataInitializer.java
 │
-├── Controller/
-│   ├── AuthController.java
-│   ├── UserController.java
-│   ├── FinancialRecordController.java
-│
-├── DTO/
-├── Model/
-├── Repository/
-├── Service/
-├── ServiceImpl/
-├── Exception/
-│   ├── GlobalExceptionHandler.java
-│   ├── ErrorResponseDTO.java
+├── controller/
+├── dto/
+├── model/
+├── repository/
+├── service/
+├── serviceImpl/
+├── exception/
 │
 └── DemoApplication.java
 ```
-
----
-
-# 🔐 Security Architecture
-
-* Stateless authentication using JWT
-* Custom `JwtFilter` for request interception
-* Roles mapped to Spring Security `GrantedAuthority`
-* Method-level authorization using `@PreAuthorize`
-* Passwords hashed using BCrypt
-* Authenticated user extracted via `SecurityContext`
 
 ---
 
@@ -133,8 +153,8 @@ src/main/java/com/finance/backend/
 * `GET /users/{id}` → self or admin
 * `GET /users` → admin only
 * `PATCH /users/{id}` → self or admin
-* `PATCH /users/{id}/role` → admin only
-* `PATCH /users/{id}/status` → admin only
+* `PATCH /users/{id}/role` → admin
+* `PATCH /users/{id}/status` → admin
 * `DELETE /users/{id}` → self or admin
 
 ---
@@ -142,19 +162,19 @@ src/main/java/com/finance/backend/
 ## 💰 Financial Records
 
 * `POST /records` → admin only
-* `GET /records` → paginated + filtered + sorted
+* `GET /records` → paginated + filter + sorted
 * `PUT /records/{id}` → admin only
 * `DELETE /records/{id}` → admin only
 
 ---
 
-## 🔍 Search (Keyword-Based)
+## 🔍 Search
 
-```
+```http
 GET /records/search?keyword=food&page=0&size=5
 ```
 
-Search fields:
+Searches in:
 
 * category
 * note
@@ -169,70 +189,29 @@ Search fields:
 
 ---
 
-# 📄 Pagination & Sorting
+# 📄 Pagination Example
 
-Example:
-
-```
+```http
 GET /records?page=0&size=5&type=INCOME
 ```
 
 * `page` → page index (0-based)
 * `size` → number of records
-* Sorted by `date (descending)`
+* Sorted by `date DESC`
 
 ---
 
-# 📘 Swagger API Documentation
+# ⚙️ Configuration (Render Deployment)
 
-Access Swagger UI:
+Environment variables used:
 
-```
-http://localhost:8080/swagger-ui/index.html
-```
-
-### 🔐 Authorize in Swagger
-
-1. Click **Authorize 🔒**
-2. Enter:
-
-```
-Bearer YOUR_JWT_TOKEN
-```
-
-3. Click **Authorize**
-
----
-
-# ⚙️ Configuration
-
-## 🔐 Environment Variables (Production)
-
-```
-SPRING_DATASOURCE_URL=jdbc:postgresql://<host>:<port>/<db>
+```env
+SPRING_DATASOURCE_URL=jdbc:postgresql://<host>:5432/<db>
 SPRING_DATASOURCE_USERNAME=<username>
-SPRING_DATASOURCE_PASSWORD=<password>
+FINANCE_DB_PASSWORD=<password>
 
-SPRING_JPA_HIBERNATE_DDL_AUTO=update
-SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.PostgreSQLDialect
-```
-
----
-
-# 🧾 Sample Request
-
-```
-POST /records
-```
-
-```json
-{
-  "amount": 5000,
-  "type": "INCOME",
-  "category": "SALARY",
-  "date": "2026-04-04T10:00:00",
-  "note": "Monthly salary"
-}
+ADMIN_EMAIL=admin@finance.com
+ADMIN_PASSWORD=admin123
 ```
 
 ---
@@ -249,9 +228,9 @@ POST /records
 
 ---
 
-# ▶️ Run Project (Local)
+# ▶️ Run Locally
 
-```
+```bash
 mvn spring-boot:run
 ```
 
@@ -259,26 +238,25 @@ mvn spring-boot:run
 
 # 🧪 Testing
 
-* Tested using Postman and Swagger
+* Tested via Postman & Swagger
 * JWT authentication verified
-* Role-based authorization enforced
-* Pagination and search validated
-* PostgreSQL integration verified
+* Role-based access enforced
+* Pagination and search working
 
 ---
 
 # 🔜 Future Improvements
 
-* Advanced filtering (amount/date range)
-* Refresh token implementation
+* Advanced filters (amount/date range)
+* Refresh tokens
 * Unit & integration testing
 * Rate limiting
-* Soft delete support
+* Soft delete
 
 ---
 
 # 👨‍💻 Author
 
-**Hardik Gupta**
+Hardik Gupta
 B.Tech CSE (AI & ML)
-📧 [hardikgupta8109@gmail.com](mailto:hardikgupta8109@gmail.com)
+hardikgupta8109@gmail.com
