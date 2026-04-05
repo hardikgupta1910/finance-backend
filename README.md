@@ -1,6 +1,6 @@
-# 💰 Finance Backend API (Spring Boot + JWT + BCrypt)
+# 💰 Finance Backend API
 
-A secure backend system for managing users and financial records with **JWT authentication**, **BCrypt password hashing**, and **role-based authorization**.
+A secure backend system built using **Spring Boot**, featuring **JWT authentication**, **BCrypt password hashing**, **role-based authorization**, **pagination**, **keyword search**, and **Swagger API documentation**.
 
 ---
 
@@ -8,11 +8,14 @@ A secure backend system for managing users and financial records with **JWT auth
 
 * 🔐 JWT Authentication (Signin / Signup)
 * 🔒 BCrypt Password Encryption
-* 👤 User Management (Role & Status control)
+* 👤 User Management with Role-Based Access Control
 * 💰 Financial Record Management
-* 📊 Dashboard Analytics
-* 🛡️ Role-Based Access Control (`@PreAuthorize`)
+* 📊 Dashboard APIs (Summary, Category, Recent)
+* 📄 Pagination & Sorting
+* 🔍 Keyword Search (category & note)
+* 🛡️ Method-level Security using `@PreAuthorize`
 * ⚠️ Global Exception Handling
+* 📘 Swagger API Documentation
 
 ---
 
@@ -58,11 +61,11 @@ Authorization: Bearer <JWT_TOKEN>
 
 # 👥 Roles & Permissions
 
-| Role    | Permissions                        |
-| ------- | ---------------------------------- |
-| ADMIN   | Full access (CRUD users & records) |
-| ANALYST | Read + create/update records       |
-| VIEWER  | Read-only access                   |
+| Role    | Access        |
+| ------- | ------------- |
+| ADMIN   | Full access   |
+| ANALYST | Read + Create |
+| VIEWER  | Read-only     |
 
 ---
 
@@ -83,14 +86,6 @@ src/main/java/com/finance/backend/
 │   ├── FinancialRecordController.java
 │
 ├── DTO/
-│   ├── SignupDTO.java
-│   ├── SigninDTO.java
-│   ├── AuthResponse.java
-│   ├── UserRequestDTO.java
-│   ├── UserResponseDTO.java
-│   ├── FinancialRecordDTO.java
-│   ├── FinancialRecordRequestDTO.java
-│
 ├── Model/
 ├── Repository/
 ├── Service/
@@ -106,11 +101,11 @@ src/main/java/com/finance/backend/
 
 # 🔐 Security Architecture
 
-* JWT-based stateless authentication
-* Custom `JwtFilter` using `OncePerRequestFilter`
-* Role-based authorization via `@PreAuthorize`
+* Stateless authentication using JWT
+* Custom `JwtFilter` for request validation
+* Roles mapped to `GrantedAuthority`
+* Authorization handled via `@PreAuthorize`
 * Passwords securely stored using BCrypt
-* Authentication stored in `SecurityContextHolder`
 
 ---
 
@@ -137,23 +132,50 @@ src/main/java/com/finance/backend/
 ## 💰 Financial Records
 
 * `POST /records` → admin
-* `GET /records` → admin, analyst
+* `GET /records` → paginated + filter + sorted
 * `PUT /records/{id}` → admin
 * `DELETE /records/{id}` → admin
 
 ---
 
+## 🔍 Search (Keyword-Based)
+
+```http
+GET /records/search?keyword=food&page=0&size=5
+```
+
+Searches across:
+
+* category
+* note
+
+---
+
 ## 📊 Dashboard
 
-* `GET /records/summary` → admin, analyst
-* `GET /records/summary/category` → admin, analyst
-* `GET /records/recent` → admin, analyst
+* `GET /records/summary`
+* `GET /records/summary/category`
+* `GET /records/recent`
+
+---
+
+# 📄 Pagination & Sorting
+
+Example:
+
+```http
+GET /records?page=0&size=5
+```
+
+Sorted by:
+
+```
+date (descending)
+```
 
 ---
 
 # 🧾 Sample Request
-
-### Create Record
 
 ```http
 POST /records
@@ -169,11 +191,21 @@ POST /records
 }
 ```
 
-Header:
+---
 
-```http
-Authorization: Bearer <JWT_TOKEN>
+# 📘 API Documentation (Swagger)
+
+Access Swagger UI:
+
 ```
+http://localhost:8080/swagger-ui/index.html
+```
+
+Features:
+
+* Interactive API testing
+* Request/response schema
+* Try APIs directly
 
 ---
 
@@ -211,18 +243,17 @@ mvn spring-boot:run
 
 * Tested using Postman
 * JWT authentication validated
-* Role-based access verified
-* Error handling standardized
+* Pagination & search verified
+* Role-based access enforced
 
 ---
 
 # 🔜 Future Improvements
 
-* Refresh token implementation
-* Role hierarchy (ADMIN > ANALYST > VIEWER)
-* Pagination & sorting
-* Logging & monitoring
+* Advanced filtering (amount/date range)
+* Soft delete support
 * Unit & integration tests
+* Rate limiting
 
 ---
 
