@@ -1,21 +1,21 @@
 # 💰 Finance Backend API
 
-A secure backend system built using **Spring Boot**, featuring **JWT authentication**, **BCrypt password hashing**, **role-based authorization**, **pagination**, **keyword search**, and **Swagger API documentation**.
+A secure and scalable backend system built using **Spring Boot**, featuring **JWT authentication**, **BCrypt password hashing**, **role-based authorization**, **pagination**, **keyword search**, and **Swagger API documentation with JWT support**.
 
 ---
 
 # 🚀 Features
 
-* 🔐 JWT Authentication (Signin / Signup)
+* 🔐 JWT Authentication (Signup / Signin)
 * 🔒 BCrypt Password Encryption
-* 👤 User Management with Role-Based Access Control
+* 👤 Role-Based Access Control (ADMIN, ANALYST, VIEWER)
 * 💰 Financial Record Management
 * 📊 Dashboard APIs (Summary, Category, Recent)
 * 📄 Pagination & Sorting
 * 🔍 Keyword Search (category & note)
 * 🛡️ Method-level Security using `@PreAuthorize`
 * ⚠️ Global Exception Handling
-* 📘 Swagger API Documentation
+* 📘 Swagger API Documentation with JWT Authorization
 
 ---
 
@@ -53,6 +53,8 @@ Response:
 
 ### 3️⃣ Use Token
 
+All protected endpoints require:
+
 ```http
 Authorization: Bearer <JWT_TOKEN>
 ```
@@ -79,6 +81,7 @@ src/main/java/com/finance/backend/
 │   ├── JwtFilter.java
 │   ├── JwtService.java
 │   ├── PasswordConfig.java
+│   ├── OpenApiConfig.java
 │
 ├── Controller/
 │   ├── AuthController.java
@@ -102,10 +105,11 @@ src/main/java/com/finance/backend/
 # 🔐 Security Architecture
 
 * Stateless authentication using JWT
-* Custom `JwtFilter` for request validation
-* Roles mapped to `GrantedAuthority`
-* Authorization handled via `@PreAuthorize`
-* Passwords securely stored using BCrypt
+* Custom `JwtFilter` for request interception
+* Roles mapped to Spring Security `GrantedAuthority`
+* Method-level authorization using `@PreAuthorize`
+* Passwords hashed using BCrypt
+* SecurityContext used to extract logged-in user
 
 ---
 
@@ -131,10 +135,10 @@ src/main/java/com/finance/backend/
 
 ## 💰 Financial Records
 
-* `POST /records` → admin
+* `POST /records` → admin only
 * `GET /records` → paginated + filter + sorted
-* `PUT /records/{id}` → admin
-* `DELETE /records/{id}` → admin
+* `PUT /records/{id}` → admin only
+* `DELETE /records/{id}` → admin only
 
 ---
 
@@ -144,7 +148,7 @@ src/main/java/com/finance/backend/
 GET /records/search?keyword=food&page=0&size=5
 ```
 
-Searches across:
+Searches:
 
 * category
 * note
@@ -164,14 +168,35 @@ Searches across:
 Example:
 
 ```http
-GET /records?page=0&size=5
+GET /records?page=0&size=5&type=INCOME
 ```
 
-Sorted by:
+* `page` → page index (0-based)
+* `size` → number of records
+* Sorted by `date (descending)`
+
+---
+
+# 📘 Swagger API Documentation
+
+Access Swagger UI:
+
+```text
+http://localhost:8080/swagger-ui/index.html
+```
+
+### 🔐 How to Authorize in Swagger
+
+1. Click **Authorize 🔒**
+2. Enter:
 
 ```
-date (descending)
+Bearer YOUR_JWT_TOKEN
 ```
+
+3. Click **Authorize**
+
+Now all requests will include the token automatically.
 
 ---
 
@@ -190,22 +215,6 @@ POST /records
   "note": "Monthly salary"
 }
 ```
-
----
-
-# 📘 API Documentation (Swagger)
-
-Access Swagger UI:
-
-```
-http://localhost:8080/swagger-ui/index.html
-```
-
-Features:
-
-* Interactive API testing
-* Request/response schema
-* Try APIs directly
 
 ---
 
@@ -241,19 +250,20 @@ mvn spring-boot:run
 
 # 🧪 Testing
 
-* Tested using Postman
-* JWT authentication validated
-* Pagination & search verified
-* Role-based access enforced
+* Tested using Postman and Swagger
+* JWT authentication verified
+* Role-based authorization enforced
+* Pagination and search validated
 
 ---
 
 # 🔜 Future Improvements
 
 * Advanced filtering (amount/date range)
-* Soft delete support
-* Unit & integration tests
+* Refresh token implementation
+* Unit & integration testing
 * Rate limiting
+* Soft delete support
 
 ---
 
