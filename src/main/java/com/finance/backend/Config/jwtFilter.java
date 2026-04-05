@@ -39,7 +39,7 @@ public class jwtFilter extends OncePerRequestFilter {
 		
 		String path = request.getRequestURI();
 		
-		// 🔥 SKIP SWAGGER
+		
 		if (path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs")) {
 			filterChain.doFilter(request, response);
 			return;

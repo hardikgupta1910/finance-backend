@@ -9,7 +9,6 @@ import com.finance.backend.Model.User;
 import java.util.List;
 
 public interface UserService {
-//	User createUser(User user);
 	
 	 User createUserFromDTO(UserRequestDTO dto);
 	
