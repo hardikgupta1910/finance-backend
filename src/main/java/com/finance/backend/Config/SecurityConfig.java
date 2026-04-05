@@ -18,22 +18,7 @@ public class SecurityConfig {
 	@Autowired
 	private jwtFilter jwtFilter;
 	
-//	@Bean
-//	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//
-//		http.csrf(crsf->crsf.disable())
-//
-//				.sessionManagement(session ->
-//						session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//				)
-//				.authorizeHttpRequests(auth->auth.requestMatchers("/users/**", "/auth/**").permitAll()
-//						.anyRequest().authenticated()
-//				)
-//				.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-//
-//		return http.build();
-//
-//	}
+
 	
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -44,19 +29,20 @@ public class SecurityConfig {
 				)
 				.authorizeHttpRequests(auth -> auth
 						
-						// 🔥 SWAGGER (allow this)
+						//  SWAGGER (allow this)
 						.requestMatchers(
+								"/",
 								"/v3/api-docs/**",
 								"/swagger-ui/**",
 								"/swagger-ui.html"
 						).permitAll()
 						
-						// 🔐 AUTH ONLY PUBLIC
+						//  AUTH ONLY PUBLIC
 						.requestMatchers("/auth/**").permitAll()
 						
 						
 						
-						// 🔒 EVERYTHING ELSE SECURED
+						//  EVERYTHING ELSE SECURED
 						.anyRequest().authenticated()
 				)
 				.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
