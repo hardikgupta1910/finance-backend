@@ -31,7 +31,6 @@ public class SecurityConfig {
 						
 						//  SWAGGER (allow this)
 						.requestMatchers(
-								"/",
 								"/v3/api-docs/**",
 								"/swagger-ui/**",
 								"/swagger-ui.html"
