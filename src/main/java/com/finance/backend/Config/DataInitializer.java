@@ -15,16 +15,21 @@ import org.springframework.stereotype.Component;
 @Component
 public class DataInitializer implements CommandLineRunner {
 	
-	@Autowired
-	private UserRepository userRepository;
+	private final UserRepository userRepository;
+	private final PasswordEncoder passwordEncoder;
 	
 	@Autowired
-	private PasswordEncoder passwordEncoder;
+	public DataInitializer(UserRepository userRepository,
+	                       PasswordEncoder passwordEncoder) {
+		this.userRepository = userRepository;
+		this.passwordEncoder = passwordEncoder;
+	}
 	
-	@Value("${ADMIN_EMAIL}")
+	
+	@Value("${ADMIN_EMAIL:admin@finance.com}")
 	private String adminEmail;
 	
-	@Value("${ADMIN_PASSWORD}")
+	@Value("${ADMIN_PASSWORD:admin123}")
 	private String adminPassword;
 	
 	private static final Logger log = LoggerFactory.getLogger(DataInitializer.class);

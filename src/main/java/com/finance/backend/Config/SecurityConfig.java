@@ -20,35 +20,7 @@ public class SecurityConfig {
 	
 
 	
-//	@Bean
-//	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//
-//		http.csrf(csrf -> csrf.disable())
-//				.sessionManagement(session ->
-//						session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//				)
-//				.authorizeHttpRequests(auth -> auth
-//
-//						//  SWAGGER (allow this)
-//						.requestMatchers(
-//								"/v3/api-docs/**",
-//								"/swagger-ui/**",
-//								"/swagger-ui.html"
-//						).permitAll()
-//
-//						//  AUTH ONLY PUBLIC
-//						.requestMatchers("/auth/**").permitAll()
-//
-//
-//
-//						//  EVERYTHING ELSE SECURED
-//						.anyRequest().authenticated()
-//				)
-//				.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-//
-//		return http.build();
-//	}
-//
+
 	
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -60,7 +32,7 @@ public class SecurityConfig {
 						session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 				)
 				
-				// 🔥 ADD THESE TWO LINES
+				
 				.formLogin(form -> form.disable())
 				.httpBasic(basic -> basic.disable())
 				
