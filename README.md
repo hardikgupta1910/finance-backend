@@ -1,6 +1,6 @@
 # 💰 Finance Backend API
 
-A secure and scalable backend system built using **Spring Boot**, featuring **JWT authentication**, **BCrypt password hashing**, **role-based authorization**, **pagination**, **keyword search**, and **Swagger API documentation with JWT support**.
+A secure and scalable backend system built using **Spring Boot**, featuring **JWT authentication**, **BCrypt password hashing**, **role-based authorization**, **pagination**, **search**, and **Swagger API documentation with JWT support**.
 
 ---
 
@@ -21,17 +21,22 @@ A secure and scalable backend system built using **Spring Boot**, featuring **JW
 
 # 🌐 Live API
 
-```text
+Base URL:
+
 https://finance-backend-1r92.onrender.com
-```
+
+⚠️ Notes:
+
+* Root endpoint `/` is secured → returns **403 Forbidden**
+* Use endpoints like `/auth/signup`, `/auth/signin`, `/records`
 
 ---
 
 # 📘 Swagger UI
 
-```text
 https://finance-backend-1r92.onrender.com/swagger-ui/index.html
-```
+
+Use Swagger to test APIs directly.
 
 ---
 
@@ -39,11 +44,7 @@ https://finance-backend-1r92.onrender.com/swagger-ui/index.html
 
 ## 1️⃣ Signup
 
-```http
 POST /auth/signup
-```
-
-### Sample Request Body
 
 ```json
 {
@@ -53,17 +54,13 @@ POST /auth/signup
 }
 ```
 
-👉 Default role assigned: **VIEWER**
+Default role: **VIEWER**
 
 ---
 
 ## 2️⃣ Signin
 
-```http
 POST /auth/signin
-```
-
-### Sample Request Body (Admin)
 
 ```json
 {
@@ -72,7 +69,7 @@ POST /auth/signin
 }
 ```
 
-### Response
+Response:
 
 ```json
 "JWT_TOKEN"
@@ -80,19 +77,17 @@ POST /auth/signin
 
 ---
 
-## 3️⃣ Use Token
+## 3️⃣ Authorization
 
 All protected endpoints require:
 
-```http
 Authorization: Bearer <JWT_TOKEN>
-```
 
 ---
 
-# 🔑 Default Admin Credentials
+# 🔑 Default Admin
 
-> Admin user is automatically created on first application startup.
+Auto-created on application startup:
 
 ```json
 {
@@ -115,7 +110,6 @@ Authorization: Bearer <JWT_TOKEN>
 
 # 📁 Project Structure
 
-```
 src/main/java/com/finance/backend/
 
 ├── config/
@@ -135,7 +129,6 @@ src/main/java/com/finance/backend/
 ├── exception/
 │
 └── DemoApplication.java
-```
 
 ---
 
@@ -143,38 +136,36 @@ src/main/java/com/finance/backend/
 
 ## 🔐 Auth
 
-* `POST /auth/signup`
-* `POST /auth/signin`
+* POST /auth/signup
+* POST /auth/signin
 
 ---
 
 ## 👤 Users
 
-* `GET /users/{id}` → self or admin
-* `GET /users` → admin only
-* `PATCH /users/{id}` → self or admin
-* `PATCH /users/{id}/role` → admin
-* `PATCH /users/{id}/status` → admin
-* `DELETE /users/{id}` → self or admin
+* GET /users/{id} → self or admin
+* GET /users → admin only
+* PATCH /users/{id} → self or admin
+* PATCH /users/{id}/role → admin
+* PATCH /users/{id}/status → admin
+* DELETE /users/{id} → self or admin
 
 ---
 
 ## 💰 Financial Records
 
-* `POST /records` → admin only
-* `GET /records` → paginated + filter + sorted
-* `PUT /records/{id}` → admin only
-* `DELETE /records/{id}` → admin only
+* POST /records → admin only
+* GET /records → paginated, filtered, sorted
+* PUT /records/{id} → admin only
+* DELETE /records/{id} → admin only
 
 ---
 
 ## 🔍 Search
 
-```http
 GET /records/search?keyword=food&page=0&size=5
-```
 
-Searches in:
+Search fields:
 
 * category
 * note
@@ -183,40 +174,36 @@ Searches in:
 
 ## 📊 Dashboard
 
-* `GET /records/summary`
-* `GET /records/summary/category`
-* `GET /records/recent`
+* GET /records/summary
+* GET /records/summary/category
+* GET /records/recent
 
 ---
 
 # 📄 Pagination Example
 
-```http
 GET /records?page=0&size=5&type=INCOME
-```
 
-* `page` → page index (0-based)
-* `size` → number of records
-* Sorted by `date DESC`
+* page → 0-based index
+* size → number of records
+* Default sorting → date DESC
 
 ---
 
-# ⚙️ Configuration (Render Deployment)
+# ⚙️ Configuration (Render)
 
-Environment variables used:
+Environment variables:
 
-```env
 SPRING_DATASOURCE_URL=jdbc:postgresql://<host>:5432/<db>
 SPRING_DATASOURCE_USERNAME=<username>
 FINANCE_DB_PASSWORD=<password>
 
-ADMIN_EMAIL=admin@finance.com
+ADMIN_EMAIL=[admin@finance.com](mailto:admin@finance.com)
 ADMIN_PASSWORD=admin123
-```
 
 ---
 
-# ⚠️ Error Response Format
+# ⚠️ Error Response
 
 ```json
 {
@@ -230,18 +217,16 @@ ADMIN_PASSWORD=admin123
 
 # ▶️ Run Locally
 
-```bash
 mvn spring-boot:run
-```
 
 ---
 
 # 🧪 Testing
 
-* Tested via Postman & Swagger
+* Tested using Postman & Swagger
 * JWT authentication verified
 * Role-based access enforced
-* Pagination and search working
+* Pagination & search validated
 
 ---
 
@@ -249,7 +234,7 @@ mvn spring-boot:run
 
 * Advanced filters (amount/date range)
 * Refresh tokens
-* Unit & integration testing
+* Unit & integration tests
 * Rate limiting
 * Soft delete
 
@@ -259,4 +244,4 @@ mvn spring-boot:run
 
 Hardik Gupta
 B.Tech CSE (AI & ML)
-hardikgupta8109@gmail.com
+[hardikgupta8109@gmail.com](mailto:hardikgupta8109@gmail.com)
