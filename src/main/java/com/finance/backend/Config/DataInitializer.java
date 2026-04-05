@@ -4,6 +4,7 @@ import com.finance.backend.Domain.Role;
 import com.finance.backend.Domain.Status;
 import com.finance.backend.Model.User;
 import com.finance.backend.Repository.UserRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,34 +13,34 @@ import org.springframework.stereotype.Component;
 @Component
 public class DataInitializer implements CommandLineRunner {
 	
-	private final UserRepository userRepository;
-	
-	private final PasswordEncoder passwordEncoder;
 	@Autowired
-	 DataInitializer(UserRepository userRepository,  PasswordEncoder passwordEncoder) {
-		this.userRepository = userRepository;
-		this.passwordEncoder = passwordEncoder;
-	}
+	private UserRepository userRepository;
 	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	
+	@Value("${ADMIN_EMAIL}")
+	private String adminEmail;
+	
+	@Value("${ADMIN_PASSWORD}")
+	private String adminPassword;
 	
 	@Override
-	public void run(String... args) throws Exception {
+	public void run(String... args) {
 		
 		boolean adminExists = userRepository.existsByRole(Role.ADMIN);
 		
 		if (!adminExists) {
 			User admin = new User();
-			admin.setEmail("admin@finance.com");
+			admin.setEmail(adminEmail);
 			admin.setUserName("admin");
-			admin.setPassword(passwordEncoder.encode("admin123"));
+			admin.setPassword(passwordEncoder.encode(adminPassword));
 			admin.setRole(Role.ADMIN);
 			admin.setStatus(Status.ACTIVE);
 			
 			userRepository.save(admin);
 			
-			System.out.println("Default admin created");
+			System.out.println("Admin created from ENV");
 		}
-		
 	}
 }
