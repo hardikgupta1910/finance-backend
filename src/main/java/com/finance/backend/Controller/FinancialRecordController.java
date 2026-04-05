@@ -39,20 +39,7 @@ public class FinancialRecordController {
 				.getPrincipal();
 	}
 	
-//	@GetMapping
-//	@PreAuthorize("hasAnyRole('ADMIN','ANALYST')")
-//	public List<FinancialRecordDTO> getRecords(@RequestParam(required = false) String type, @RequestParam(required = false) String category) {
-//
-//		Long userId = getUserId();
-//
-//		List<FinancialRecord> records =
-//				financialRecordService.getRecords(userId, type, category);
-//
-//		return records.stream().map(financialRecordService::mapToDTO).toList();
-//
-//
-//	}
-//
+
 	
 	@GetMapping
 	@PreAuthorize("hasAnyRole('ADMIN','ANALYST')")

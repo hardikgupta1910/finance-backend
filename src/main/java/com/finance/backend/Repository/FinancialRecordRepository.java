@@ -22,12 +22,7 @@ public interface FinancialRecordRepository extends JpaRepository<FinancialRecord
 	
 	Page<FinancialRecord> findByUserIdAndTypeAndCategory(Long userId, Type type, String category, Pageable pageable);
 	
-//	Page<FinancialRecord> findByUserIdAndCategoryContainingIgnoreCaseAndNoteContainingIgnoreCase(
-//			Long userId,
-//			String category,
-//			String note,
-//			Pageable pageable
-//	);
+
 Page<FinancialRecord> findByUserIdAndCategoryContainingIgnoreCaseOrNoteContainingIgnoreCase(Long userId,
 			String category,
 			String note,

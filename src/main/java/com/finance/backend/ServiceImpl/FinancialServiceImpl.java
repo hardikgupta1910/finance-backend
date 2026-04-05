@@ -73,29 +73,7 @@ public class FinancialServiceImpl implements FinancialRecordService {
 	}
 	
 
-//	@Override
-//	public List<FinancialRecord> getRecords(Long userId, String type, String category) {
-//
-//
-//
-//		List<FinancialRecord> records = financialRecordRepository.findByUserId(userId);
-//
-//		// filter by type
-//		if (type != null) {
-//			records = records.stream()
-//					.filter(r -> r.getType().name().equalsIgnoreCase(type))
-//					.toList();
-//		}
-//
-//		// filter by category
-//		if (category != null) {
-//			records = records.stream()
-//					.filter(r -> r.getCategory().equalsIgnoreCase(category))
-//					.toList();
-//		}
-//
-//		return records;
-//	}
+
 	
 	@Override
 	public Page<FinancialRecord> getRecords(Long userId, String type, String category, Pageable pageable) {
