@@ -4,6 +4,8 @@ import com.finance.backend.Domain.Role;
 import com.finance.backend.Domain.Status;
 import com.finance.backend.Model.User;
 import com.finance.backend.Repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -25,6 +27,7 @@ public class DataInitializer implements CommandLineRunner {
 	@Value("${ADMIN_PASSWORD}")
 	private String adminPassword;
 	
+	private static final Logger log = LoggerFactory.getLogger(DataInitializer.class);
 	@Override
 	public void run(String... args) {
 		
@@ -40,7 +43,7 @@ public class DataInitializer implements CommandLineRunner {
 			
 			userRepository.save(admin);
 			
-			System.out.println("Admin created from ENV");
+			log.info("Admin created successfully");
 		}
 	}
 }
