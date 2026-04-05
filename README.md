@@ -16,13 +16,23 @@ A secure and scalable backend system built using **Spring Boot**, featuring **JW
 * 🛡️ Method-level Security using `@PreAuthorize`
 * ⚠️ Global Exception Handling
 * 📘 Swagger API Documentation with JWT Authorization
+* 🐘 PostgreSQL Database Integration
+* ☁️ Ready for Cloud Deployment (Render)
 
 ---
 
 # 🌐 Base URL
 
-```http
+### 🔹 Local
+
+```
 http://localhost:8080
+```
+
+### 🔹 Production (Render)
+
+```
+https://<your-app-name>.onrender.com
 ```
 
 ---
@@ -31,15 +41,13 @@ http://localhost:8080
 
 ### 1️⃣ Signup
 
-```http
+```
 POST /auth/signup
 ```
 
----
-
 ### 2️⃣ Signin
 
-```http
+```
 POST /auth/signin
 ```
 
@@ -49,13 +57,11 @@ Response:
 "JWT_TOKEN"
 ```
 
----
-
 ### 3️⃣ Use Token
 
 All protected endpoints require:
 
-```http
+```
 Authorization: Bearer <JWT_TOKEN>
 ```
 
@@ -63,11 +69,11 @@ Authorization: Bearer <JWT_TOKEN>
 
 # 👥 Roles & Permissions
 
-| Role    | Access        |
-| ------- | ------------- |
-| ADMIN   | Full access   |
-| ANALYST | Read + Create |
-| VIEWER  | Read-only     |
+| Role    | Access                        |
+| ------- | ----------------------------- |
+| ADMIN   | Full access                   |
+| ANALYST | Read + Create records         |
+| VIEWER  | Read-only (summary & records) |
 
 ---
 
@@ -109,7 +115,7 @@ src/main/java/com/finance/backend/
 * Roles mapped to Spring Security `GrantedAuthority`
 * Method-level authorization using `@PreAuthorize`
 * Passwords hashed using BCrypt
-* SecurityContext used to extract logged-in user
+* Authenticated user extracted via `SecurityContext`
 
 ---
 
@@ -127,8 +133,8 @@ src/main/java/com/finance/backend/
 * `GET /users/{id}` → self or admin
 * `GET /users` → admin only
 * `PATCH /users/{id}` → self or admin
-* `PATCH /users/{id}/role` → admin
-* `PATCH /users/{id}/status` → admin
+* `PATCH /users/{id}/role` → admin only
+* `PATCH /users/{id}/status` → admin only
 * `DELETE /users/{id}` → self or admin
 
 ---
@@ -136,7 +142,7 @@ src/main/java/com/finance/backend/
 ## 💰 Financial Records
 
 * `POST /records` → admin only
-* `GET /records` → paginated + filter + sorted
+* `GET /records` → paginated + filtered + sorted
 * `PUT /records/{id}` → admin only
 * `DELETE /records/{id}` → admin only
 
@@ -144,11 +150,11 @@ src/main/java/com/finance/backend/
 
 ## 🔍 Search (Keyword-Based)
 
-```http
+```
 GET /records/search?keyword=food&page=0&size=5
 ```
 
-Searches:
+Search fields:
 
 * category
 * note
@@ -167,7 +173,7 @@ Searches:
 
 Example:
 
-```http
+```
 GET /records?page=0&size=5&type=INCOME
 ```
 
@@ -181,11 +187,11 @@ GET /records?page=0&size=5&type=INCOME
 
 Access Swagger UI:
 
-```text
+```
 http://localhost:8080/swagger-ui/index.html
 ```
 
-### 🔐 How to Authorize in Swagger
+### 🔐 Authorize in Swagger
 
 1. Click **Authorize 🔒**
 2. Enter:
@@ -196,13 +202,26 @@ Bearer YOUR_JWT_TOKEN
 
 3. Click **Authorize**
 
-Now all requests will include the token automatically.
+---
+
+# ⚙️ Configuration
+
+## 🔐 Environment Variables (Production)
+
+```
+SPRING_DATASOURCE_URL=jdbc:postgresql://<host>:<port>/<db>
+SPRING_DATASOURCE_USERNAME=<username>
+SPRING_DATASOURCE_PASSWORD=<password>
+
+SPRING_JPA_HIBERNATE_DDL_AUTO=update
+SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.PostgreSQLDialect
+```
 
 ---
 
 # 🧾 Sample Request
 
-```http
+```
 POST /records
 ```
 
@@ -214,16 +233,6 @@ POST /records
   "date": "2026-04-04T10:00:00",
   "note": "Monthly salary"
 }
-```
-
----
-
-# ⚙️ Configuration
-
-### Environment Variable
-
-```properties
-spring.datasource.password=${FINANCE_DB_PASSWORD}
 ```
 
 ---
@@ -240,9 +249,9 @@ spring.datasource.password=${FINANCE_DB_PASSWORD}
 
 ---
 
-# ▶️ Run Project
+# ▶️ Run Project (Local)
 
-```bash
+```
 mvn spring-boot:run
 ```
 
@@ -254,6 +263,7 @@ mvn spring-boot:run
 * JWT authentication verified
 * Role-based authorization enforced
 * Pagination and search validated
+* PostgreSQL integration verified
 
 ---
 
@@ -269,8 +279,6 @@ mvn spring-boot:run
 
 # 👨‍💻 Author
 
-Hardik Gupta
+**Hardik Gupta**
 B.Tech CSE (AI & ML)
-hardikgupta8109@gmail.com
-
----
+📧 [hardikgupta8109@gmail.com](mailto:hardikgupta8109@gmail.com)
