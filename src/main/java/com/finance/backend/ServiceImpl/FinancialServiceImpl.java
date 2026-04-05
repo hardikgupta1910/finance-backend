@@ -232,7 +232,7 @@ public class FinancialServiceImpl implements FinancialRecordService {
 			Pageable pageable) {
 		
 		return financialRecordRepository
-				.findByUserIdAndCategoryContainingIgnoreCaseAndNoteContainingIgnoreCase(
+				.findByUserIdAndCategoryContainingIgnoreCaseOrNoteContainingIgnoreCase(
 						userId,
 						keyword == null ? "" : keyword,
 						keyword == null ? "" : keyword,
