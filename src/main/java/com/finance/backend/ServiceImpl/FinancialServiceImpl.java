@@ -2,7 +2,6 @@ package com.finance.backend.ServiceImpl;
 
 import com.finance.backend.DTO.FinancialRecordDTO;
 import com.finance.backend.DTO.FinancialRecordRequestDTO;
-import com.finance.backend.Domain.Role;
 import com.finance.backend.Domain.Type;
 import com.finance.backend.Model.FinancialRecord;
 import com.finance.backend.Model.User;
@@ -10,6 +9,8 @@ import com.finance.backend.Repository.FinancialRecordRepository;
 import com.finance.backend.Repository.UserRepository;
 import com.finance.backend.Service.FinancialRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -72,28 +73,64 @@ public class FinancialServiceImpl implements FinancialRecordService {
 	}
 	
 
+//	@Override
+//	public List<FinancialRecord> getRecords(Long userId, String type, String category) {
+//
+//
+//
+//		List<FinancialRecord> records = financialRecordRepository.findByUserId(userId);
+//
+//		// filter by type
+//		if (type != null) {
+//			records = records.stream()
+//					.filter(r -> r.getType().name().equalsIgnoreCase(type))
+//					.toList();
+//		}
+//
+//		// filter by category
+//		if (category != null) {
+//			records = records.stream()
+//					.filter(r -> r.getCategory().equalsIgnoreCase(category))
+//					.toList();
+//		}
+//
+//		return records;
+//	}
+	
 	@Override
-	public List<FinancialRecord> getRecords(Long userId, String type, String category) {
+	public Page<FinancialRecord> getRecords(Long userId, String type, String category, Pageable pageable) {
 		
+		// Case 1: both filters present
+		if (type != null && category != null) {
+			return financialRecordRepository.findByUserIdAndTypeAndCategory(userId,
+							Type.valueOf(type.toUpperCase()),
+							category,
+							pageable
+					);
+		}
 		
-		
-		List<FinancialRecord> records = financialRecordRepository.findByUserId(userId);
-		
-		// filter by type
+		// Case 2: only type
 		if (type != null) {
-			records = records.stream()
-					.filter(r -> r.getType().name().equalsIgnoreCase(type))
-					.toList();
+			return financialRecordRepository
+					.findByUserIdAndType(
+							userId,
+							Type.valueOf(type.toUpperCase()),
+							pageable
+					);
 		}
 		
-		// filter by category
+		// Case 3: only category
 		if (category != null) {
-			records = records.stream()
-					.filter(r -> r.getCategory().equalsIgnoreCase(category))
-					.toList();
+			return financialRecordRepository
+					.findByUserIdAndCategory(
+							userId,
+							category,
+							pageable
+					);
 		}
 		
-		return records;
+		// Case 4: no filters
+		return financialRecordRepository.findByUserId(userId, pageable);
 	}
 	
 	@Transactional
@@ -126,9 +163,6 @@ public class FinancialServiceImpl implements FinancialRecordService {
 	
 	@Override
 	public BigDecimal getTotalExpense(Long userId){
-		User user=userRepository.findById(userId).orElseThrow(()->new RuntimeException("User not found"));
-		
-
 		
 		List<FinancialRecord> records=financialRecordRepository.findByUserId(userId);
 		
@@ -170,11 +204,7 @@ public class FinancialServiceImpl implements FinancialRecordService {
 	}
 	
 	public Map<String, BigDecimal> getCategoryTotals(Long UserId){
-		User user=userRepository.findById(UserId).orElseThrow(()->new RuntimeException("User not found"));
-		
-//		if(user.getRole()== Role.VIEWER){
-//			throw new RuntimeException("Access Denied for  Viewer Role");
-//		}
+	
 		
 		List<FinancialRecord> records=financialRecordRepository.findByUserId(UserId);
 		Map<String, BigDecimal> result = new HashMap<>();
@@ -196,14 +226,22 @@ public class FinancialServiceImpl implements FinancialRecordService {
 	}
 	
 	@Override
+	public Page<FinancialRecord> searchRecords(
+			Long userId,
+			String keyword,
+			Pageable pageable) {
+		
+		return financialRecordRepository
+				.findByUserIdAndCategoryContainingIgnoreCaseAndNoteContainingIgnoreCase(
+						userId,
+						keyword == null ? "" : keyword,
+						keyword == null ? "" : keyword,
+						pageable
+				);
+	}
+	
+	@Override
 	public List<FinancialRecordDTO> getRecentActivity(Long userId) {
-		
-		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new RuntimeException("User not found"));
-		
-//		if (user.getRole() == Role.VIEWER) {
-//			throw new RuntimeException("Access Denied");
-//		}
 		
 		List<FinancialRecord> records =
 				financialRecordRepository.findTop5ByUserIdOrderByDateDesc(userId);

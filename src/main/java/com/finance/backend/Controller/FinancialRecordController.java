@@ -7,6 +7,10 @@ import com.finance.backend.Model.FinancialRecord;
 import com.finance.backend.Service.FinancialRecordService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,19 +39,43 @@ public class FinancialRecordController {
 				.getPrincipal();
 	}
 	
+//	@GetMapping
+//	@PreAuthorize("hasAnyRole('ADMIN','ANALYST')")
+//	public List<FinancialRecordDTO> getRecords(@RequestParam(required = false) String type, @RequestParam(required = false) String category) {
+//
+//		Long userId = getUserId();
+//
+//		List<FinancialRecord> records =
+//				financialRecordService.getRecords(userId, type, category);
+//
+//		return records.stream().map(financialRecordService::mapToDTO).toList();
+//
+//
+//	}
+//
+	
 	@GetMapping
 	@PreAuthorize("hasAnyRole('ADMIN','ANALYST')")
-	public List<FinancialRecordDTO> getRecords(
+	public ResponseEntity<Page<FinancialRecordDTO>> getRecords(
 			@RequestParam(required = false) String type,
-			@RequestParam(required = false) String category) {
+			@RequestParam(required = false) String category,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "5") int size) {
 		
 		Long userId = getUserId();
 		
-		List<FinancialRecord> records =
-				financialRecordService.getRecords(userId, type, category);
+		Pageable pageable = PageRequest.of(
+				page,
+				size,
+				Sort.by("date").descending()   // 🔥 THIS LINE
+		);
 		
-		return records.stream().map(financialRecordService::mapToDTO).toList();
+		Page<FinancialRecord> records =
+				financialRecordService.getRecords(userId, type, category, pageable);
+		
+		return ResponseEntity.ok(records.map(financialRecordService::mapToDTO));
 	}
+	
 	
 	@PostMapping
 	@PreAuthorize("hasRole('ADMIN')")
@@ -115,5 +143,22 @@ public class FinancialRecordController {
 		
 		Long userId = getUserId();
 		return ResponseEntity.ok(financialRecordService.getRecentActivity(userId));
+	}
+	
+	@GetMapping("/search")
+	@PreAuthorize("hasAnyRole('ADMIN','ANALYST')")
+	public ResponseEntity<Page<FinancialRecordDTO>> searchRecords(
+			@RequestParam(required = false) String keyword,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "5") int size) {
+		
+		Long userId = getUserId();
+		
+		Pageable pageable = PageRequest.of(page, size);
+		
+		Page<FinancialRecord> records =
+				financialRecordService.searchRecords(userId, keyword, pageable);
+		
+		return ResponseEntity.ok(records.map(financialRecordService::mapToDTO));
 	}
 }
