@@ -37,8 +37,9 @@ https://finance-backend-1r92.onrender.com
 https://finance-backend-1r92.onrender.com/swagger-ui/index.html
 
 ⚠️ Note:
-This service is hosted on Render free tier.  
-It may take 30–60 seconds to respond on first request due to cold start.
+⚠️ The application is hosted on Render free tier. 
+The service may take up to 2–3 minutes to respond on the first request due to cold start. 
+Subsequent requests are significantly faster.
 
 👉 Use Swagger to explore and test all APIs easily.
 
