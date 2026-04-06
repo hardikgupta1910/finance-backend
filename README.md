@@ -36,7 +36,11 @@ https://finance-backend-1r92.onrender.com
 
 https://finance-backend-1r92.onrender.com/swagger-ui/index.html
 
-👉 Use Swagger to test APIs directly in browser.
+⚠️ Note:
+This service is hosted on Render free tier.  
+It may take 30–60 seconds to respond on first request due to cold start.
+
+👉 Use Swagger to explore and test all APIs easily.
 
 ---
 
