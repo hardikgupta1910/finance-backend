@@ -65,7 +65,7 @@ public class FinancialRecordController {
 	
 	
 	@PostMapping
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("isAuthenticated()")
 	public ResponseEntity<FinancialRecordDTO> createRecord(
 			@Valid @RequestBody FinancialRecordRequestDTO dto) {
 		
