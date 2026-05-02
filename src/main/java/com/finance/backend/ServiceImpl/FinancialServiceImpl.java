@@ -72,7 +72,7 @@ public class FinancialServiceImpl implements FinancialRecordService {
 			throw new RuntimeException("Record data cannot be null");
 		}
 
-		// 🔹 Fetch record WITH ownership check
+		//  Fetch record WITH ownership check
 		FinancialRecord record = financialRecordRepository
 				.findByIdAndUserId(recordId, userId)
 				.orElseThrow(() -> new RuntimeException("Record not found or unauthorized"));

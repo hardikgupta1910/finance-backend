@@ -119,20 +119,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	
-//	@Override
-//	public void deleteUser( Long requesterID , Long userId) {
-//
-//
-//		User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-//
-//		long adminCount=userRepository.findAll().stream()
-//				.filter(r->r.getRole()==Role.ADMIN).count();
-//
-//		if (user.getRole() == Role.ADMIN && adminCount == 1) {
-//			throw new RuntimeException("Cannot delete the only admin");
-//		}
-//		userRepository.delete(user);
-//	}
+
 
 	@Override
 	public void deleteUser(Long requesterId, Long userId) {
