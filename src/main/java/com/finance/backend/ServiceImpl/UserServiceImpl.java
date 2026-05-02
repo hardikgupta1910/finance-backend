@@ -85,36 +85,94 @@ public class UserServiceImpl implements UserService {
 		return userRepository.save(user);
 	}
 	
+//	@Override
+//	public User updateUserStatus(Long adminId, Long userId, StatusUpdateDTO dto) {
+//
+//		if (dto == null || dto.getStatus() == null) {
+//			throw new RuntimeException("Status data cannot be null");
+//		}
+//
+//
+//		User user = userRepository.findById(userId).orElseThrow(()->new RuntimeException("User not found"));
+//		user.setStatus(Status.valueOf(dto.getStatus()));
+//
+//		return userRepository.save(user);
+//	}
+
+
 	@Override
-	public User updateUserStatus(Long adminId, Long userId, StatusUpdateDTO dto) {
-		
+	public User updateUserStatus(Long requesterId, Long userId, StatusUpdateDTO dto) {
+
 		if (dto == null || dto.getStatus() == null) {
 			throw new RuntimeException("Status data cannot be null");
 		}
-		
-		
-		
-		User user = userRepository.findById(userId).orElseThrow(()->new RuntimeException("User not found"));
-		user.setStatus(Status.valueOf(dto.getStatus()));
-		
+
+		//  Fetch requester
+		User requester = userRepository.findById(requesterId)
+				.orElseThrow(() -> new RuntimeException("Requester not found"));
+
+		//  Authorization check
+		if (requester.getRole() != Role.ADMIN && !requesterId.equals(userId)) {
+			throw new RuntimeException("Unauthorized");
+		}
+
+		//  Fetch target user
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new RuntimeException("User not found"));
+
+		//  Safe enum conversion
+		try {
+			user.setStatus(Status.valueOf(dto.getStatus().toUpperCase()));
+		} catch (Exception e) {
+			throw new RuntimeException("Invalid status value");
+		}
+
 		return userRepository.save(user);
 	}
+
 	
+//	@Override
+//	public void deleteUser( Long requesterID , Long userId) {
+//
+//
+//		User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+//
+//		long adminCount=userRepository.findAll().stream()
+//				.filter(r->r.getRole()==Role.ADMIN).count();
+//
+//		if (user.getRole() == Role.ADMIN && adminCount == 1) {
+//			throw new RuntimeException("Cannot delete the only admin");
+//		}
+//		userRepository.delete(user);
+//	}
+
 	@Override
-	public void deleteUser( Long requesterID , Long userId) {
-		
-		
-		User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-		
-		long adminCount=userRepository.findAll().stream()
-				.filter(r->r.getRole()==Role.ADMIN).count();
-		
+	public void deleteUser(Long requesterId, Long userId) {
+
+		//  Fetch requester
+		User requester = userRepository.findById(requesterId)
+				.orElseThrow(() -> new RuntimeException("Requester not found"));
+
+		//  Authorization check
+		if (requester.getRole() != Role.ADMIN && !requesterId.equals(userId)) {
+			throw new RuntimeException("Unauthorized");
+		}
+
+		//  Fetch target user
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new RuntimeException("User not found"));
+
+		//  Prevent deleting last admin
+		long adminCount = userRepository.countByRole(Role.ADMIN);
+
 		if (user.getRole() == Role.ADMIN && adminCount == 1) {
 			throw new RuntimeException("Cannot delete the only admin");
 		}
+
 		userRepository.delete(user);
 	}
-	
+
+
 	@Override
 	public User updateUser(Long requesterId, Long userId, User updatedUser) {
 		

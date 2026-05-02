@@ -54,7 +54,7 @@ public class FinancialRecordController {
 		Pageable pageable = PageRequest.of(
 				page,
 				size,
-				Sort.by("date").descending()   // 🔥 THIS LINE
+				Sort.by("date").descending()   //  THIS LINE
 		);
 		
 		Page<FinancialRecord> records =

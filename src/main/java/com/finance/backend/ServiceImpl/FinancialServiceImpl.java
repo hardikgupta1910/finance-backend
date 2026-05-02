@@ -28,50 +28,123 @@ public class FinancialServiceImpl implements FinancialRecordService {
 		this.userRepository=userRepository;
 	}
 	
+//	@Override
+//	public FinancialRecord createRecord(Long userId, FinancialRecord record) {
+//
+//		if (record == null) {
+//			throw new RuntimeException("Record cannot be null");
+//		}
+//		User user=userRepository.findById(userId).orElseThrow(()->new RuntimeException("User not found"));
+//
+//
+//
+//				 record.setUser(user);
+//		return  financialRecordRepository.save(record);
+//
+//	}
+
 	@Override
 	public FinancialRecord createRecord(Long userId, FinancialRecord record) {
-		
+
 		if (record == null) {
 			throw new RuntimeException("Record cannot be null");
 		}
-		User user=userRepository.findById(userId).orElseThrow(()->new RuntimeException("User not found"));
-		
 
-				 
-				 record.setUser(user);
-		return  financialRecordRepository.save(record);
-		
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new RuntimeException("User not found"));
+
+		//  Business validations
+		if (record.getAmount() == null || record.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+			throw new RuntimeException("Amount must be greater than 0");
+		}
+
+		if (record.getType() == null) {
+			throw new RuntimeException("Type is required");
+		}
+
+		if (record.getDate() == null) {
+			throw new RuntimeException("Date is required");
+		}
+
+		//  Assign ownership
+		record.setUser(user);
+
+		return financialRecordRepository.save(record);
 	}
+
 	
+//	@Override
+//	public FinancialRecord updateRecord(Long recordId, Long userId, FinancialRecord record) {
+//
+//		if (record == null) {
+//			throw new RuntimeException("Record data cannot be null");
+//		}
+//
+//
+//		FinancialRecord updateRecord=financialRecordRepository.findById(recordId).orElseThrow(()->new RuntimeException("Record not found"));
+//
+//		if (record.getAmount() != null) {
+//			updateRecord.setAmount(record.getAmount());
+//		}
+//		if (record.getType() != null) {
+//			updateRecord.setType(record.getType());
+//		}
+//		if (record.getCategory() != null) {
+//			updateRecord.setCategory(record.getCategory());
+//		}
+//		if (record.getDate() != null) {
+//			updateRecord.setDate(record.getDate());
+//		}
+//		if (record.getNote() != null) {
+//			updateRecord.setNote(record.getNote());
+//		}
+//
+//		return financialRecordRepository.save(updateRecord);
+//	}
+//
+
+
+
 	@Override
-	public FinancialRecord updateRecord(Long recordId, Long userId, FinancialRecord record) {
-		
-		if (record == null) {
+	@Transactional
+	public FinancialRecord updateRecord(Long recordId, Long userId, FinancialRecord updatedData) {
+
+		if (updatedData == null) {
 			throw new RuntimeException("Record data cannot be null");
 		}
 
-		
-		FinancialRecord updateRecord=financialRecordRepository.findById(recordId).orElseThrow(()->new RuntimeException("Record not found"));
+		// 🔹 Fetch record WITH ownership check
+		FinancialRecord record = financialRecordRepository
+				.findByIdAndUserId(recordId, userId)
+				.orElseThrow(() -> new RuntimeException("Record not found or unauthorized"));
 
-		if (record.getAmount() != null) {
-			updateRecord.setAmount(record.getAmount());
+		//  Apply updates with validation
+
+		if (updatedData.getAmount() != null) {
+			if (updatedData.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+				throw new RuntimeException("Amount must be greater than 0");
+			}
+			record.setAmount(updatedData.getAmount());
 		}
-		if (record.getType() != null) {
-			updateRecord.setType(record.getType());
+
+		if (updatedData.getType() != null) {
+			record.setType(updatedData.getType());
 		}
-		if (record.getCategory() != null) {
-			updateRecord.setCategory(record.getCategory());
+
+		if (updatedData.getCategory() != null) {
+			record.setCategory(updatedData.getCategory());
 		}
-		if (record.getDate() != null) {
-			updateRecord.setDate(record.getDate());
+
+		if (updatedData.getDate() != null) {
+			record.setDate(updatedData.getDate());
 		}
-		if (record.getNote() != null) {
-			updateRecord.setNote(record.getNote());
+
+		if (updatedData.getNote() != null) {
+			record.setNote(updatedData.getNote());
 		}
-		
-		return financialRecordRepository.save(updateRecord);
+
+		return financialRecordRepository.save(record);
 	}
-	
 
 
 	
@@ -111,26 +184,45 @@ public class FinancialServiceImpl implements FinancialRecordService {
 		return financialRecordRepository.findByUserId(userId, pageable);
 	}
 	
+//	@Transactional
+//	@Override
+//	public void deleteRecord(Long recordId, Long userId) {
+//
+//		FinancialRecord record=financialRecordRepository.findById(recordId).orElseThrow(()->new RuntimeException("Record not found"));
+//
+//		financialRecordRepository.delete(record);
+//    }
+
+	@Override
 	@Transactional
-	@Override
 	public void deleteRecord(Long recordId, Long userId) {
-	 
-		FinancialRecord record=financialRecordRepository.findById(recordId).orElseThrow(()->new RuntimeException("Record not found"));
-		
+
+		FinancialRecord record = financialRecordRepository
+				.findByIdAndUserId(recordId, userId)
+				.orElseThrow(() -> new RuntimeException("Record not found or unauthorized"));
+
 		financialRecordRepository.delete(record);
-    }
-	
-	@Override
-	public BigDecimal getTotalIncome(Long userId){
-		
-		
-		List<FinancialRecord> records=financialRecordRepository.findByUserId(userId);
-		
-		return records.stream()
-				.filter(r -> r.getType() == Type.INCOME)
-				.map(FinancialRecord::getAmount)
-				.reduce(BigDecimal.ZERO, BigDecimal::add);
 	}
+	
+//	@Override
+//	public BigDecimal getTotalIncome(Long userId){
+//
+//
+//		List<FinancialRecord> records=financialRecordRepository.findByUserId(userId);
+//
+//		return records.stream()
+//				.filter(r -> r.getType() == Type.INCOME)
+//				.map(FinancialRecord::getAmount)
+//				.reduce(BigDecimal.ZERO, BigDecimal::add);
+//	}
+
+	@Override
+	public BigDecimal getTotalIncome(Long userId) {
+		return Optional.ofNullable(
+				financialRecordRepository.sumByUserIdAndType(userId, Type.INCOME)
+		).orElse(BigDecimal.ZERO);
+	}
+
 	@Override
 	public BigDecimal netBalance(Long userId){
 		BigDecimal income=getTotalIncome(userId);
@@ -139,15 +231,22 @@ public class FinancialServiceImpl implements FinancialRecordService {
 		return  income.subtract(expense);
 	}
 	
+//	@Override
+//	public BigDecimal getTotalExpense(Long userId){
+//
+//		List<FinancialRecord> records=financialRecordRepository.findByUserId(userId);
+//
+//		return records.stream()
+//				.filter(r -> r.getType() == Type.EXPENSE)
+//				.map(FinancialRecord::getAmount)
+//				.reduce(BigDecimal.ZERO, BigDecimal::add);
+//	}
+
 	@Override
-	public BigDecimal getTotalExpense(Long userId){
-		
-		List<FinancialRecord> records=financialRecordRepository.findByUserId(userId);
-		
-		return records.stream()
-				.filter(r -> r.getType() == Type.EXPENSE)
-				.map(FinancialRecord::getAmount)
-				.reduce(BigDecimal.ZERO, BigDecimal::add);
+	public BigDecimal getTotalExpense(Long userId) {
+		return Optional.ofNullable(
+				financialRecordRepository.sumByUserIdAndType(userId, Type.EXPENSE)
+		).orElse(BigDecimal.ZERO);
 	}
 	
 	@Override
@@ -209,11 +308,19 @@ public class FinancialServiceImpl implements FinancialRecordService {
 			String keyword,
 			Pageable pageable) {
 		
+//		return financialRecordRepository
+//				.findByUserIdAndCategoryContainingIgnoreCaseOrNoteContainingIgnoreCase(
+//						userId,
+//						keyword == null ? "" : keyword,
+//						keyword == null ? "" : keyword,
+//						pageable
+//				);
 		return financialRecordRepository
-				.findByUserIdAndCategoryContainingIgnoreCaseOrNoteContainingIgnoreCase(
+				.findByUserIdAndCategoryContainingIgnoreCaseOrUserIdAndNoteContainingIgnoreCase(
 						userId,
-						keyword == null ? "" : keyword,
-						keyword == null ? "" : keyword,
+						keyword,
+						userId,
+						keyword,
 						pageable
 				);
 	}
@@ -228,4 +335,10 @@ public class FinancialServiceImpl implements FinancialRecordService {
 				.map(this::mapToDTO)
 				.toList();
 	}
+
+
+
+
+
+
 }

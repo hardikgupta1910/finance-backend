@@ -32,4 +32,6 @@ void deleteRecord(Long recordId, Long userId);
 	
 	List<FinancialRecordDTO> getRecentActivity(Long userId);
 	Page<FinancialRecord> searchRecords(Long userId, String keyword, Pageable pageable);
+
+
 }
