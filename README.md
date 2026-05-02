@@ -23,7 +23,7 @@ A secure and scalable backend system built using **Spring Boot**, featuring **JW
 
 Base URL:
 
-https://finance-backend-1r92.onrender.com
+[https://finance-backend-1r92.onrender.com](https://finance-backend-jwr2.onrender.com)
 
 ⚠️ Note:
 
@@ -34,7 +34,7 @@ https://finance-backend-1r92.onrender.com
 
 # 📘 Swagger UI
 
-https://finance-backend-1r92.onrender.com/swagger-ui/index.html
+[https://finance-backend-1r92.onrender.com/swagger-ui/index.html](https://finance-backend-jwr2.onrender.com/swagger-ui/index.html#/)
 
 ⚠️ Note:
 ⚠️ The application is hosted on Render free tier. 
