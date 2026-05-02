@@ -28,20 +28,7 @@ public class FinancialServiceImpl implements FinancialRecordService {
 		this.userRepository=userRepository;
 	}
 	
-//	@Override
-//	public FinancialRecord createRecord(Long userId, FinancialRecord record) {
-//
-//		if (record == null) {
-//			throw new RuntimeException("Record cannot be null");
-//		}
-//		User user=userRepository.findById(userId).orElseThrow(()->new RuntimeException("User not found"));
-//
-//
-//
-//				 record.setUser(user);
-//		return  financialRecordRepository.save(record);
-//
-//	}
+
 
 	@Override
 	public FinancialRecord createRecord(Long userId, FinancialRecord record) {
@@ -73,35 +60,7 @@ public class FinancialServiceImpl implements FinancialRecordService {
 	}
 
 	
-//	@Override
-//	public FinancialRecord updateRecord(Long recordId, Long userId, FinancialRecord record) {
-//
-//		if (record == null) {
-//			throw new RuntimeException("Record data cannot be null");
-//		}
-//
-//
-//		FinancialRecord updateRecord=financialRecordRepository.findById(recordId).orElseThrow(()->new RuntimeException("Record not found"));
-//
-//		if (record.getAmount() != null) {
-//			updateRecord.setAmount(record.getAmount());
-//		}
-//		if (record.getType() != null) {
-//			updateRecord.setType(record.getType());
-//		}
-//		if (record.getCategory() != null) {
-//			updateRecord.setCategory(record.getCategory());
-//		}
-//		if (record.getDate() != null) {
-//			updateRecord.setDate(record.getDate());
-//		}
-//		if (record.getNote() != null) {
-//			updateRecord.setNote(record.getNote());
-//		}
-//
-//		return financialRecordRepository.save(updateRecord);
-//	}
-//
+
 
 
 
@@ -184,14 +143,7 @@ public class FinancialServiceImpl implements FinancialRecordService {
 		return financialRecordRepository.findByUserId(userId, pageable);
 	}
 	
-//	@Transactional
-//	@Override
-//	public void deleteRecord(Long recordId, Long userId) {
-//
-//		FinancialRecord record=financialRecordRepository.findById(recordId).orElseThrow(()->new RuntimeException("Record not found"));
-//
-//		financialRecordRepository.delete(record);
-//    }
+
 
 	@Override
 	@Transactional
@@ -204,17 +156,7 @@ public class FinancialServiceImpl implements FinancialRecordService {
 		financialRecordRepository.delete(record);
 	}
 	
-//	@Override
-//	public BigDecimal getTotalIncome(Long userId){
-//
-//
-//		List<FinancialRecord> records=financialRecordRepository.findByUserId(userId);
-//
-//		return records.stream()
-//				.filter(r -> r.getType() == Type.INCOME)
-//				.map(FinancialRecord::getAmount)
-//				.reduce(BigDecimal.ZERO, BigDecimal::add);
-//	}
+
 
 	@Override
 	public BigDecimal getTotalIncome(Long userId) {
@@ -231,16 +173,7 @@ public class FinancialServiceImpl implements FinancialRecordService {
 		return  income.subtract(expense);
 	}
 	
-//	@Override
-//	public BigDecimal getTotalExpense(Long userId){
-//
-//		List<FinancialRecord> records=financialRecordRepository.findByUserId(userId);
-//
-//		return records.stream()
-//				.filter(r -> r.getType() == Type.EXPENSE)
-//				.map(FinancialRecord::getAmount)
-//				.reduce(BigDecimal.ZERO, BigDecimal::add);
-//	}
+
 
 	@Override
 	public BigDecimal getTotalExpense(Long userId) {
@@ -308,13 +241,7 @@ public class FinancialServiceImpl implements FinancialRecordService {
 			String keyword,
 			Pageable pageable) {
 		
-//		return financialRecordRepository
-//				.findByUserIdAndCategoryContainingIgnoreCaseOrNoteContainingIgnoreCase(
-//						userId,
-//						keyword == null ? "" : keyword,
-//						keyword == null ? "" : keyword,
-//						pageable
-//				);
+
 		return financialRecordRepository
 				.findByUserIdAndCategoryContainingIgnoreCaseOrUserIdAndNoteContainingIgnoreCase(
 						userId,

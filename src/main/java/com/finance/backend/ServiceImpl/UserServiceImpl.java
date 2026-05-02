@@ -85,19 +85,7 @@ public class UserServiceImpl implements UserService {
 		return userRepository.save(user);
 	}
 	
-//	@Override
-//	public User updateUserStatus(Long adminId, Long userId, StatusUpdateDTO dto) {
-//
-//		if (dto == null || dto.getStatus() == null) {
-//			throw new RuntimeException("Status data cannot be null");
-//		}
-//
-//
-//		User user = userRepository.findById(userId).orElseThrow(()->new RuntimeException("User not found"));
-//		user.setStatus(Status.valueOf(dto.getStatus()));
-//
-//		return userRepository.save(user);
-//	}
+
 
 
 	@Override
