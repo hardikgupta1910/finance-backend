@@ -21,25 +21,25 @@ A secure backend application built using Spring Boot with JWT authentication, ro
 
 # 🏗️ Spring Boot Backend Architecture
 
-![Architecture](./assets/springboot-architecture.png)
+![Architecture](./assets/springboot%20architecture.png)
 
 ---
 
 # 🔐 JWT Authentication Workflow
 
-![JWT Workflow](./assets/jwt_auth_flow.png)
+![JWT Workflow](./assets/jwt%20auth%20flow.png)
 
 ---
 
 # 🔄 API Request & Security Flow
 
-![API Flow](./assets/finance-api-flow.png)
+![API Flow](./assets/financapi%20flow.png)
 
 ---
 
 # 🗄️ Database Schema (ER Diagram)
 
-![Database Schema](./assets/finance-db-schema.png)
+![Database Schema](./assets/finance_db_design.png)
 
 ---
 
@@ -92,6 +92,7 @@ POST /auth/signup
 ```
 
 Default role assigned:
+
 ```text
 VIEWER
 ```
