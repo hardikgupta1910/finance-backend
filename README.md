@@ -45,17 +45,14 @@ A secure backend application built using Spring Boot with JWT authentication, ro
 
 # 🌐 Live API
 
-## Base URL
+\## Base URL
 
 ```text
 https://finance-backend-1r92.onrender.com
 ```
 
-> ⚠️ Note:
-> The application is hosted on Render free tier.  
-> First request may take 2–3 minutes due to cold start.
-
----
+> ⚠️ Root endpoint `/` is secured and may return `403 Forbidden`.  
+> Use Swagger UI to explore and test APIs.
 
 # 📘 Swagger UI
 
