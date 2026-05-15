@@ -1,47 +1,73 @@
 # 💰 Finance Backend API
 
-A secure and scalable backend system built using **Spring Boot**, featuring **JWT authentication**, **BCrypt password hashing**, **role-based authorization**, **pagination**, **keyword search**, and **Swagger API documentation with JWT support**.
+A secure backend application built using Spring Boot with JWT authentication, role-based authorization, pagination, keyword search, Swagger API documentation, Docker support, and PostgreSQL integration.
 
 ---
 
 # 🚀 Features
 
-* 🔐 JWT Authentication (Signup / Signin)
-* 🔒 BCrypt Password Encryption
-* 👤 Role-Based Access Control (ADMIN, ANALYST, VIEWER)
-* 💰 Financial Record Management
-* 📊 Dashboard APIs (Summary, Category, Recent)
-* 📄 Pagination & Sorting
-* 🔍 Keyword Search (category & note)
-* 🛡️ Method-level Security using `@PreAuthorize`
-* ⚠️ Global Exception Handling
-* 📘 Swagger API Documentation with JWT Authorization
+- JWT Authentication (Signup / Signin)
+- BCrypt Password Encryption
+- Role-Based Access Control (ADMIN, ANALYST, VIEWER)
+- Financial Record Management APIs
+- Pagination, Sorting, and Keyword Search
+- Method-Level Security using `@PreAuthorize`
+- Global Exception Handling
+- Swagger API Documentation with JWT Authorization
+- Dockerized Deployment Support
+- GitHub Actions CI/CD Integration
+
+---
+
+# 🏗️ Spring Boot Backend Architecture
+
+![Architecture](./assets/springboot-architecture.png)
+
+---
+
+# 🔐 JWT Authentication Workflow
+
+![JWT Workflow](./assets/jwt_auth_flow.png)
+
+---
+
+# 🔄 API Request & Security Flow
+
+![API Flow](./assets/finance-api-flow.png)
+
+---
+
+# 🗄️ Database Schema (ER Diagram)
+
+![Database Schema](./assets/finance-db-schema.png)
 
 ---
 
 # 🌐 Live API
 
-Base URL:
+## Base URL
 
-[https://finance-backend-1r92.onrender.com](https://finance-backend-jwr2.onrender.com)
+```text
+https://finance-backend-1r92.onrender.com
+```
 
-⚠️ Note:
-
-* Root endpoint `/` is secured → will return **403 Forbidden**
-* Use specific endpoints like `/auth/signup`, `/auth/signin`, `/records`, etc.
+> ⚠️ Note:
+> The application is hosted on Render free tier.  
+> First request may take 2–3 minutes due to cold start.
 
 ---
 
 # 📘 Swagger UI
 
-[https://finance-backend-1r92.onrender.com/swagger-ui/index.html](https://finance-backend-jwr2.onrender.com/swagger-ui/index.html#/)
+```text
+https://finance-backend-1r92.onrender.com/swagger-ui/index.html
+```
 
-⚠️ Note:
-⚠️ The application is hosted on Render free tier. 
-The service may take up to 2–3 minutes to respond on the first request due to cold start. 
-Subsequent requests are significantly faster.
-
-👉 Use Swagger to explore and test all APIs easily.
+Use Swagger UI to:
+- Explore APIs
+- Test endpoints
+- Authorize JWT tokens
+- Validate request/response flow
 
 ---
 
@@ -49,11 +75,13 @@ Subsequent requests are significantly faster.
 
 ## 1️⃣ Signup
 
+### Endpoint
+
 ```http
 POST /auth/signup
 ```
 
-### Sample Request Body
+### Request Body
 
 ```json
 {
@@ -63,17 +91,22 @@ POST /auth/signup
 }
 ```
 
-👉 Default role assigned: **VIEWER**
+Default role assigned:
+```text
+VIEWER
+```
 
 ---
 
 ## 2️⃣ Signin
 
+### Endpoint
+
 ```http
 POST /auth/signin
 ```
 
-### Sample Request Body (Admin)
+### Request Body
 
 ```json
 {
@@ -84,15 +117,15 @@ POST /auth/signin
 
 ### Response
 
-```json
-"JWT_TOKEN"
+```text
+JWT_TOKEN
 ```
 
 ---
 
-## 3️⃣ Use Token
+## 3️⃣ Use JWT Token
 
-All protected endpoints require:
+Protected endpoints require:
 
 ```http
 Authorization: Bearer <JWT_TOKEN>
@@ -102,7 +135,7 @@ Authorization: Bearer <JWT_TOKEN>
 
 # 🔑 Default Admin Credentials
 
-> Admin user is automatically created on first application startup.
+Admin user is automatically created during first startup.
 
 ```json
 {
@@ -111,23 +144,21 @@ Authorization: Bearer <JWT_TOKEN>
 }
 ```
 
-💡 First-time users can directly login using default admin credentials.
-
 ---
 
 # 👥 Roles & Permissions
 
-| Role    | Access        |
-| ------- | ------------- |
-| ADMIN   | Full access   |
+| Role | Access |
+|---|---|
+| ADMIN | Full Access |
 | ANALYST | Read + Create |
-| VIEWER  | Read-only     |
+| VIEWER | Read Only |
 
 ---
 
 # 📁 Project Structure
 
-```
+```text
 src/main/java/com/finance/backend/
 
 ├── config/
@@ -153,30 +184,36 @@ src/main/java/com/finance/backend/
 
 # 🌐 API Endpoints
 
-## 🔐 Auth
+## 🔐 Authentication
 
-* `POST /auth/signup`
-* `POST /auth/signin`
+```http
+POST /auth/signup
+POST /auth/signin
+```
 
 ---
 
 ## 👤 Users
 
-* `GET /users/{id}` → self or admin
-* `GET /users` → admin only
-* `PATCH /users/{id}` → self or admin
-* `PATCH /users/{id}/role` → admin
-* `PATCH /users/{id}/status` → admin
-* `DELETE /users/{id}` → self or admin
+```http
+GET    /users/{id}
+GET    /users
+PATCH  /users/{id}
+PATCH  /users/{id}/role
+PATCH  /users/{id}/status
+DELETE /users/{id}
+```
 
 ---
 
 ## 💰 Financial Records
 
-* `POST /records` → admin only
-* `GET /records` → paginated + filter + sorted
-* `PUT /records/{id}` → admin only
-* `DELETE /records/{id}` → admin only
+```http
+POST   /records
+GET    /records
+PUT    /records/{id}
+DELETE /records/{id}
+```
 
 ---
 
@@ -186,18 +223,19 @@ src/main/java/com/finance/backend/
 GET /records/search?keyword=food&page=0&size=5
 ```
 
-Searches:
-
-* category
-* note
+Search supported on:
+- category
+- note
 
 ---
 
-## 📊 Dashboard
+## 📊 Dashboard APIs
 
-* `GET /records/summary`
-* `GET /records/summary/category`
-* `GET /records/recent`
+```http
+GET /records/summary
+GET /records/summary/category
+GET /records/recent
+```
 
 ---
 
@@ -207,15 +245,13 @@ Searches:
 GET /records?page=0&size=5&type=INCOME
 ```
 
-* `page` → page index (0-based)
-* `size` → number of records
-* Sorted by `date DESC`
+- `page` → page index (0-based)
+- `size` → number of records per page
+- Sorted by date descending
 
 ---
 
-# ⚙️ Configuration (Render Deployment)
-
-Environment variables used:
+# ⚙️ Environment Variables
 
 ```env
 SPRING_DATASOURCE_URL=jdbc:postgresql://<host>:5432/<db>
@@ -224,6 +260,30 @@ SPRING_DATASOURCE_PASSWORD=<password>
 
 ADMIN_EMAIL=admin@finance.com
 ADMIN_PASSWORD=admin123
+```
+
+---
+
+# 🐳 Docker Support
+
+## Build Docker Image
+
+```bash
+docker build -t finance-backend .
+```
+
+## Run Container
+
+```bash
+docker run -p 8080:8080 finance-backend
+```
+
+---
+
+# ▶️ Run Locally
+
+```bash
+mvn spring-boot:run
 ```
 
 ---
@@ -240,35 +300,39 @@ ADMIN_PASSWORD=admin123
 
 ---
 
-# ▶️ Run Locally
-
-```bash
-mvn spring-boot:run
-```
-
----
-
 # 🧪 Testing
 
-* Tested using Postman and Swagger
-* JWT authentication verified
-* Role-based authorization enforced
-* Pagination and search validated
+Tested using:
+- Postman
+- Swagger UI
+
+Validated:
+- JWT Authentication
+- Role-Based Authorization
+- Pagination & Search
+- Protected API Access
 
 ---
 
 # 🔜 Future Improvements
 
-* Advanced filtering (amount/date range)
-* Refresh token implementation
-* Unit & integration testing
-* Rate limiting
-* Soft delete support
+- Refresh Token Support
+- Advanced Filtering
+- Unit & Integration Testing
+- Rate Limiting
+- Soft Delete Support
 
 ---
 
-# 👨‍💻 Author
+# 🛠️ Tech Stack
 
-Hardik Gupta
-B.Tech CSE (AI & ML)
-hardikgupta8109@gmail.com
+- Java
+- Spring Boot
+- Spring Security
+- JWT
+- PostgreSQL
+- Swagger OpenAPI
+- Docker
+- Maven
+- GitHub Actions
+- Render
